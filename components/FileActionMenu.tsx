@@ -7,6 +7,7 @@ import { decryptFile, importKey } from '@/lib/encryption';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
 import { updateFileInInventory } from '@/lib/vault';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { ConfirmationModal } from './ConfirmationModal';
 
 interface FileActionMenuProps {
     file: VaultFile;
@@ -16,10 +17,11 @@ interface FileActionMenuProps {
 
 export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps) => {
     console.log('🏗️ RENDERING_ACTION_MENU_FOR:', file.name);
-    const { publicKey } = useWallet();
     const [isOpen, setIsOpen] = React.useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isEditingCategory, setIsEditingCategory] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const { publicKey } = useWallet();
 
     const handleDownload = async (previewOnly = false) => {
         try {
@@ -97,17 +99,15 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
     };
 
     const handleConfirmDelete = () => {
-        console.log('🗑️ REMOVE_ASSET_CLICKED');
-        const confirmed = window.confirm(`Are you sure you want to remove "${file.name}"? This action cannot be undone.`);
-        if (confirmed) {
-            console.log('✅ DELETE_CONFIRMED');
-            if (onDelete) {
-                onDelete(file);
-            }
-            setIsOpen(false);
-        } else {
-            console.log('❌ DELETE_CANCELLED');
-        }
+        console.log('🗑️ OPENING_DELETE_MODAL');
+        setShowDeleteConfirm(true);
+    };
+
+    const onActualDelete = () => {
+        console.log('🔥 ACTUAL_DELETE_CONFIRMED');
+        if (onDelete) onDelete(file);
+        setShowDeleteConfirm(false); // Close modal after action
+        setIsOpen(false); // Close main menu after action
     };
 
     return (
@@ -248,6 +248,15 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                     </div>
                 )}
             </AnimatePresence>
+
+            <ConfirmationModal 
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={onActualDelete}
+                title="REMOVE_ASSET"
+                message={`Are you sure you want to permanently purge "${file.name}" from your vault and the IPFS network?`}
+                confirmLabel="PURGE_ASSET"
+            />
         </div>
     );
 };

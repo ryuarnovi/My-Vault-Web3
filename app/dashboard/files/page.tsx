@@ -9,6 +9,7 @@ import { getFileInventory, saveFileToInventory, removeFileFromInventory } from '
 import { FileActionMenu } from '@/components/FileActionMenu';
 import { useSearchParams } from 'next/navigation';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
+import { ConfirmationModal } from '@/components/ConfirmationModal';
 import Link from 'next/link';
 
 function FilesContent() {
@@ -23,6 +24,7 @@ function FilesContent() {
     const [isScanning, setIsScanning] = React.useState(false);
     const [deletingCids, setDeletingCids] = React.useState<Set<string>>(new Set());
     const [error, setError] = React.useState<string | null>(null);
+    const [confirmModal, setConfirmModal] = React.useState<{ isOpen: boolean; rf: any }>({ isOpen: false, rf: null });
 
     const loadLocalFiles = React.useCallback(() => {
         if (publicKey) {
@@ -115,46 +117,36 @@ function FilesContent() {
         if (!publicKey) return;
         
         console.log('🗑️ REQUEST_DELETE:', file.id);
-        const isConfirmed = window.confirm(`Permanently purge "${file.name}" from IPFS storage?`);
         
-        if (isConfirmed) {
-            // Instant local removal for UX
-            removeFileFromInventory(publicKey.toBase58(), file.id);
-            loadLocalFiles();
-            
-            // Execute remote purge
-            setDeletingCids(prev => new Set(prev).add(file.cid));
-            try {
-                const res = await fetch('/api/files/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cid: file.cid })
-                });
-                console.log('📡 DELETE_RS:', res.status);
-            } catch (e) {
-                console.error('❌ SYNC_ERR:', e);
-            } finally {
-                setDeletingCids(prev => {
-                    const next = new Set(prev);
-                    next.delete(file.cid);
-                    return next;
-                });
-            }
+        // Remove locally immediately for UX
+        removeFileFromInventory(publicKey.toBase58(), file.id);
+        loadLocalFiles();
+        
+        // Background purge
+        setDeletingCids(prev => new Set(prev).add(file.cid));
+        try {
+            const apiRes = await fetch('/api/files/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cid: file.cid })
+            });
+            console.log('📡 DELETE_SYNC_STATUS:', apiRes.status);
+        } catch (e) {
+            console.error('❌ REMOTE_SYNC_FAIL:', e);
+        } finally {
+            setDeletingCids(prev => {
+                const next = new Set(prev);
+                next.delete(file.cid);
+                return next;
+            });
         }
     };
 
     const handleRemoteDelete = async (rf: any) => {
         if (!publicKey) return;
         const cid = rf.ipfs_pin_hash;
-        console.log('🗑️ CLICK_DETECTED: handleRemoteDelete for', cid);
+        console.log('🗑️ IPFS_PURGE_TRIGGER:', cid);
         
-        const isConfirmed = window.confirm(`Permanently purge "${rf.metadata?.name || cid}" from IPFS storage?`);
-        if (!isConfirmed) {
-            console.log('❌ CANCELLED: Remote purge aborted');
-            return;
-        }
-
-        console.log('⏳ STARTING_REMOTE_PURGE_PROCESS');
         setDeletingCids(prev => new Set(prev).add(cid));
         try {
             const res = await fetch('/api/files/delete', {
@@ -163,19 +155,16 @@ function FilesContent() {
                 body: JSON.stringify({ cid })
             });
 
-            console.log('📡 REMOTE_RESPONSE_STATUS:', res.status);
-
             if (res.ok) {
                 setRemoteFiles(prev => prev.filter(f => f.ipfs_pin_hash !== cid));
-                console.log('✨ REMOTE_FILE_REMOVED_FROM_STATE');
+                console.log('✨ REMOTE_FILE_UNPINNED');
             } else {
                 const data = await res.json();
-                console.error('❌ REMOTE_PURGE_API_ERROR:', data.error);
-                throw new Error(data.error || 'UNPIN_FAILED');
+                setError(`PURGE_ERROR: ${data.error}`);
             }
         } catch (err: any) {
-            console.error('🔥 REMOTE_PURGE_FETCH_ERROR:', err);
-            alert(`PURGE_FAILED: ${err.message}`);
+            console.error('🔥 PURGE_FATAL:', err);
+            setError('COMMUNICATION_HUNG: IPFS_PURGE_PENDING');
         } finally {
             setDeletingCids(prev => {
                 const updated = new Set(prev);
@@ -411,11 +400,7 @@ function FilesContent() {
                                                         RESTORE
                                                     </button>
                                                     <button 
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            handleRemoteDelete(rf);
-                                                        }}
+                                                        onClick={() => setConfirmModal({ isOpen: true, rf })}
                                                         disabled={deletingCids.has(rf.ipfs_pin_hash)}
                                                         className="p-2 rounded-lg glass text-error hover:bg-error/10 transition-all border border-error/20 disabled:opacity-50 relative z-20"
                                                         title="PURGE_FROM_REMOTE"
@@ -435,6 +420,14 @@ function FilesContent() {
                     )
                 )}
             </div>
+            <ConfirmationModal 
+                isOpen={confirmModal.isOpen}
+                onClose={() => setConfirmModal({ isOpen: false, rf: null })}
+                onConfirm={() => handleRemoteDelete(confirmModal.rf)}
+                title="PURGE_REMOTE_ASSET"
+                message={`Permanently unpin "${confirmModal.rf?.metadata?.name || 'this asset'}" from IPFS? This cannot be undone.`}
+                confirmLabel="PURGE_NETWORK"
+            />
         </div>
     );
 }

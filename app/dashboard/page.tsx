@@ -72,38 +72,36 @@ function DashboardContent() {
 
     const handleDelete = async (file: any) => {
         if (!publicKey) return;
-        if (confirm(`Permanently delete "${file.name}"?\n(This will hide it immediately and attempt to purge from IPFS.)`)) {
-            try {
-                // 1. Instant Local Delete
-                const newInventory = removeFileFromInventory(publicKey.toBase58(), file.id) || [];
-                
-                // Update state immediately
-                const sorted = [...newInventory].sort((a: any, b: any) => b.uploadedAt - a.uploadedAt);
-                setFiles(sorted.slice(0, 5));
-                
-                const totalSize = newInventory.reduce((acc: number, f: any) => acc + f.size, 0);
-                setStats({
-                    usage: totalSize > 1024 * 1024 
-                        ? `${(totalSize / (1024 * 1024)).toFixed(1)} MB` 
-                        : `${(totalSize / 1024).toFixed(1)} KB`,
-                    count: newInventory.length,
-                    shared: 0
-                });
+        try {
+            // 1. Instant Local Delete
+            const newInventory = removeFileFromInventory(publicKey.toBase58(), file.id) || [];
+            
+            // Update state immediately
+            const sorted = [...newInventory].sort((a: any, b: any) => b.uploadedAt - a.uploadedAt);
+            setFiles(sorted.slice(0, 5));
+            
+            const totalSize = newInventory.reduce((acc: number, f: any) => acc + f.size, 0);
+            setStats({
+                usage: totalSize > 1024 * 1024 
+                    ? `${(totalSize / (1024 * 1024)).toFixed(1)} MB` 
+                    : `${(totalSize / 1024).toFixed(1)} KB`,
+                count: newInventory.length,
+                shared: 0
+            });
 
-                // 2. Background Sync
-                fetch('/api/files/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cid: file.cid })
-                }).then(res => {
-                    if (res.ok) console.log('✅ Remote purge synced');
-                    else console.warn('⚠️ Remote purge sync delayed');
-                }).catch(e => console.error('❌ Remote sync error:', e));
+            // 2. Background Sync
+            fetch('/api/files/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cid: file.cid })
+            }).then(res => {
+                if (res.ok) console.log('✅ Remote purge synced');
+                else console.warn('⚠️ Remote purge sync delayed');
+            }).catch(e => console.error('❌ Remote sync error:', e));
 
-            } catch (err) {
-                console.error('Delete process failed:', err);
-                alert('FAILED_TO_REMOVE_LOCAL_ASSET');
-            }
+        } catch (err) {
+            console.error('Delete process failed:', err);
+            alert('FAILED_TO_REMOVE_LOCAL_ASSET');
         }
     };
 

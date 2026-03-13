@@ -15,13 +15,18 @@ export async function POST(req: NextRequest) {
     try {
         console.log(`🗑️ UNPINNING_FROM_PINATA: ${cid}`);
         
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
         const response = await fetch(`https://api.pinata.cloud/pinning/unpin/${cid}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${PINATA_JWT.trim()}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -39,6 +44,10 @@ export async function POST(req: NextRequest) {
         console.log(`✅ UNPIN_SUCCESSFUL: ${cid}`);
         return NextResponse.json({ success: true });
     } catch (error: any) {
+        if (error.name === 'AbortError') {
+            console.error('❌ PINATA_UNPIN_TIMEOUT:', cid);
+            return NextResponse.json({ error: 'API_TIMEOUT: PINATA_COMMUNICATION_HUNG' }, { status: 504 });
+        }
         console.error('⚠️ UNPIN_INTERNAL_ERROR:', error.message);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
