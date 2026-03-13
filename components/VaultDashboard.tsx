@@ -147,11 +147,11 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                             animate={{ x: 0 }}
                             exit={{ x: -300 }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 w-72 bg-surface border-r border-glass-border z-[100] lg:hidden"
+                            className="fixed inset-y-0 left-0 w-72 bg-surface dark:bg-[#0A0A0E] border-r border-glass-border z-[100] lg:hidden shadow-2xl"
                         >
-                            <div className="absolute top-6 right-6">
-                                <button onClick={() => setIsMobileMenuOpen(false)} className="text-muted hover:text-main">
-                                    <X size={24} />
+                            <div className="absolute top-8 right-6">
+                                <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 flex items-center justify-center glass clip-corners-sm text-accent hover:text-main transition-colors">
+                                    <X size={20} />
                                 </button>
                             </div>
                             <SidebarContent />
@@ -172,8 +172,8 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                             <Menu size={20} />
                         </button>
                         
-                        <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border">
-                            <Search size={16} className="text-muted" />
+                        <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border group focus-within:border-accent/40 transition-colors">
+                            <Search size={16} className="text-muted group-focus-within:text-accent transition-colors" />
                             <input 
                                 type="text" 
                                 placeholder="ACCESS_VAULT_QUERY..." 
@@ -185,7 +185,7 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                                     else params.delete('q');
                                     router.push(`${pathname}?${params.toString()}`);
                                 }}
-                                className="bg-transparent border-none text-main outline-none w-full text-[13px] tech-text placeholder:text-muted/40"
+                                className="bg-transparent border-none text-main outline-none w-full text-[11px] font-black tech-text placeholder:text-muted/30 uppercase tracking-[0.15em] selection:bg-accent/30"
                             />
                         </div>
 

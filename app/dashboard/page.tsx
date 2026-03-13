@@ -133,7 +133,7 @@ function DashboardContent() {
                     </Link>
                 </div>
                 
-                <div className="glass-card border border-glass-border overflow-hidden hud-border">
+                <div className="glass-card border border-glass-border hud-border overflow-visible">
                     {files.length === 0 ? (
                         <div className="py-24 text-center flex flex-col items-center gap-6">
                             <div className="w-20 h-20 glass clip-corners flex items-center justify-center text-muted opacity-20">
@@ -146,10 +146,10 @@ function DashboardContent() {
                             <table className="w-full text-left border-collapse min-w-[600px]">
                                 <thead>
                                     <tr className="border-b border-glass-border bg-white/[0.02]">
-                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">FILE_NAME</th>
-                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">SIZE</th>
-                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-center">TIME_LOGG</th>
-                                        <th className="px-8 py-6"></th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text min-w-[240px]">FILE_NAME</th>
+                                        <th className="px-4 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">SIZE</th>
+                                        <th className="px-4 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-center">TIME_LOGG</th>
+                                        <th className="px-4 py-6"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -162,25 +162,27 @@ function DashboardContent() {
                                         >
                                             <td className="px-8 py-6 font-bold text-main">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="p-2.5 glass clip-corners-sm group-hover:bg-accent transition-colors">
+                                                    <div className="p-2.5 glass clip-corners-sm group-hover:bg-accent transition-colors shrink-0">
                                                         <Files size={16} className="text-muted group-hover:text-primary-fg transition-colors" />
                                                     </div>
-                                                    <span className="truncate max-w-[200px]">{file.name}</span>
+                                                    <span className="truncate max-w-[150px] lg:max-w-[200px]">{file.name}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-8 py-6 text-sm text-muted font-mono tracking-tighter">
+                                            <td className="px-4 py-6 text-sm text-muted font-mono tracking-tighter whitespace-nowrap">
                                                 {(file.size / 1024).toFixed(1)} KB
                                             </td>
-                                            <td className="px-8 py-6 text-xs text-muted tech-text text-center opacity-70">
-                                                [{formatTime(file.uploadedAt)}]
+                                            <td className="px-4 py-6 text-xs text-muted tech-text text-center opacity-70 whitespace-nowrap">
+                                                [{formatTime(file.uploadedAt).toUpperCase()}]
                                             </td>
-                                            <td className="px-8 py-6 text-right">
-                                                <FileActionMenu file={file} onDelete={handleDelete} onUpdate={() => {
-                                                    if (publicKey) {
-                                                        const inventory = getFileInventory(publicKey.toBase58());
-                                                        setFiles([...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 5));
-                                                    }
-                                                }} />
+                                            <td className="px-4 py-6 text-right relative">
+                                                <div className="flex justify-end">
+                                                    <FileActionMenu file={file} onDelete={handleDelete} onUpdate={() => {
+                                                        if (publicKey) {
+                                                            const inventory = getFileInventory(publicKey.toBase58());
+                                                            setFiles([...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 5));
+                                                        }
+                                                    }} />
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

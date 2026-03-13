@@ -2,29 +2,25 @@
 
 Vault3 is a decentralized, end-to-end encrypted personal file storage solution built on **Solana** and **IPFS (via Pinata)**.
 
-<div align="center">
-  <img src="./public/images/image.png" alt="Dashboard Preview" width="800" />
-  <br />
-  <img src="./public/images/image2.png" alt="Upload Interface" width="800" />
-</div>
+![Dashboard Preview](./public/images/image.png)
+![Upload Interface](./public/images/image2.png)
 
 ## Features
 
-- 🔐 **End-to-End Encryption**: Files are encrypted in your browser using AES-256 before being uploaded.
-- 🌐 **Decentralized Storage**: Files are stored on IPFS, ensuring your data is distributed and resilient.
-- ⛓️ **Solana Proof of Existence**: Optionally record your file's CID and hash on the Solana blockchain for immutable proof.
-- 🛡️ **Gated Access**: Restricted access to specific Solana wallet addresses (Master Wallet).
-- 📁 **Category Management**: Organize your files into categories like Documents, Images, Passcodes, etc.
-- ✨ **Premium UI**: Modern macOS-inspired design with glassmorphism and smooth animations.
+- 🔐 **End-to-End Encryption**: Files are mangled locally in your browser using AES-256 before matrix transmission.
+- 🌐 **Global IPFS Scanning**: Detect and recover lost assets via Pinata network synchronization.
+- ⛓️ **Solana Proof of Existence**: Record immutable CID fragments to the Solana mainnet matrix for permanent verification.
+- 🎨 **Endfield HUD Design**: High-fidelity UI with crystal-liquid vibrancy, dot-grids, and HUD-inspired aesthetics.
+- 📁 **Class_Category System**: Dynamic organization of encrypted strings across various data classes.
+- 🛡️ **Zero-Knowledge Portal**: Restricted access for the authorized End-ministrator wallet only.
 
-## Tech Stack
+## Architecture & Logic
 
-- **Framework**: Next.js 16 (Turbopack)
-- **Blockchain**: Solana (@solana/web3.js)
-- **Storage**: IPFS (Pinata)
-- **Styling**: Tailwind CSS v4
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
+- **Framework**: [Next.js](https://nextjs.org/) (Turbopack Powered)
+- **Blockchain**: [Solana](https://solana.com/) (@solana/web3.js)
+- **Primary Storage**: [IPFS](https://ipfs.tech/) via [Pinata](https://www.pinata.cloud/)
+- **Visual Matrix**: Tailwind CSS v4 & Framer Motion
+- **Aesthetics**: Arknights: Endfield Theme (Crystal Glass + HUD)
 
 ## Getting Started
 

@@ -6,8 +6,16 @@
   --color-brand-gold: var(--accent);
   --color-brand-light: var(--text-main);
   
-  --color-success: #10b981;
-  --color-error: #ef4444;
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-surface: var(--surface);
+  --color-main: var(--text-main);
+  --color-muted: var(--text-muted);
+  
+  --color-success: var(--success);
+  --color-error: var(--error);
+
+  --color-glass-border: var(--glass-border);
 }
 
 :root {

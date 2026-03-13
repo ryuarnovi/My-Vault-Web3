@@ -106,15 +106,15 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                         className="fixed inset-0 z-10" 
                         onClick={() => setIsOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-48 glass-card border-brand-gold/10 bg-brand-dark/90 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 overflow-hidden">
+                    <div className="absolute right-0 mt-3 w-56 glass-card border border-glass-border shadow-2xl z-[100] clip-corners-sm divide-y divide-glass-border overflow-hidden">
                         <button 
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleDownload();
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-light hover:bg-white/5 transition-colors"
+                            className="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black tech-text tracking-widest text-main hover:bg-accent hover:text-accent-fg transition-all uppercase"
                         >
-                            <Download size={16} className="text-brand-gold" />
+                            <Download size={16} />
                             Decrypt & Download
                         </button>
                         
@@ -123,9 +123,9 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                             target="_blank" 
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-brand-light hover:bg-white/5 transition-colors"
+                            className="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
                         >
-                            <ExternalLink size={16} className="text-brand-muted" />
+                            <ExternalLink size={16} />
                             View on IPFS
                         </a>
                         
@@ -134,13 +134,13 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                                 e.stopPropagation();
                                 setIsEditingCategory(!isEditingCategory);
                             }}
-                            className="w-full flex items-center justify-between px-4 py-3 text-sm text-brand-light hover:bg-white/5 transition-colors"
+                            className="w-full flex items-center justify-between px-5 py-4 text-[10px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
                         >
-                            <div className="flex items-center gap-3">
-                                <Tag size={16} className="text-brand-muted" />
+                            <div className="flex items-center gap-4">
+                                <Tag size={16} />
                                 Edit Category
                             </div>
-                            <ChevronRight size={14} className={`text-brand-muted/30 transition-transform ${isEditingCategory ? 'rotate-90' : ''}`} />
+                            <ChevronRight size={14} className={`transition-transform duration-300 ${isEditingCategory ? 'rotate-90' : ''}`} />
                         </button>
 
                         {isEditingCategory && (
@@ -156,10 +156,10 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                                                 setIsOpen(false);
                                             }
                                         }}
-                                        className={`px-2 py-1.5 text-[10px] rounded-md text-left transition-colors ${
+                                        className={`px-3 py-2 text-[9px] font-black tech-text tracking-tight rounded-md text-left transition-all uppercase ${
                                             file.category === cat 
-                                            ? 'bg-brand-gold/20 text-brand-gold' 
-                                            : 'text-brand-muted hover:bg-white/5'
+                                            ? 'bg-accent text-accent-fg' 
+                                            : 'text-muted hover:bg-accent/10 hover:text-accent'
                                         }`}
                                     >
                                         {cat}
@@ -168,18 +168,16 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                             </div>
                         )}
                         
-                        <div className="h-px bg-brand-muted/10" />
-                        
                         <button 
                             onClick={(e) => {
                                 e.stopPropagation();
                                 if (onDelete) onDelete(file.id);
                                 setIsOpen(false);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-error hover:bg-error/5 transition-colors"
+                            className="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black tech-text tracking-widest text-error hover:bg-error/10 transition-all uppercase"
                         >
                             <Trash2 size={16} />
-                            Remove from List
+                            Remove Asset
                         </button>
                     </div>
                 </>
