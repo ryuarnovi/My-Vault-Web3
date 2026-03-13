@@ -31,18 +31,18 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
         onClick={onClick}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             active 
-            ? 'bg-brand-gold/10 text-brand-gold' 
-            : 'text-brand-muted hover:bg-white/5'
-        }`}
+            ? 'bg-accent/20 text-accent font-bold' 
+            : 'text-muted hover:bg-white/5 hover:text-main'
+        } [.dark-sidebar_&]:${active ? 'text-accent' : 'text-slate-400 hover:text-white'}`}
     >
-        <span className={active ? 'text-brand-gold' : 'text-brand-muted group-hover:text-brand-light'}>
+        <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity'}>
             {icon}
         </span>
-        <span className="font-semibold">{label}</span>
+        <span className="font-semibold text-sm tracking-tight">{label}</span>
         {active && (
             <motion.div 
                 layoutId="sidebar-active"
-                className="ml-auto w-1 h-4 bg-brand-gold rounded-full"
+                className="ml-auto w-1 h-4 bg-accent rounded-full shadow-[0_0_10px_rgba(var(--accent-rgb),0.5)]"
             />
         )}
     </button>
@@ -85,10 +85,10 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
         <div className="flex flex-col h-full gap-8 p-6">
             <div>
                 <div className="flex items-center gap-3 px-3 mb-10">
-                    <div className="w-10 h-10 bg-primary flex items-center justify-center clip-corners-sm">
-                        <Files size={20} className="text-primary-fg" />
+                    <div className="w-10 h-10 bg-accent flex items-center justify-center clip-corners-sm">
+                        <Files size={20} className="text-white" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-main tech-text">
+                    <span className="text-2xl font-black tracking-tighter text-main [.dark-sidebar_&]:text-white tech-text">
                         Vault<span className="text-accent">3</span>
                     </span>
                 </div>
@@ -147,14 +147,16 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                             animate={{ x: 0 }}
                             exit={{ x: -300 }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 w-72 bg-surface dark:bg-[#0A0A0E] border-r border-glass-border z-[100] lg:hidden shadow-2xl"
+                            className="fixed inset-y-0 left-0 w-72 bg-[#0A0A0E] border-r border-glass-border z-[100] lg:hidden shadow-2xl dark-sidebar"
                         >
                             <div className="absolute top-8 right-6">
-                                <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 flex items-center justify-center glass clip-corners-sm text-accent hover:text-main transition-colors">
+                                <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 flex items-center justify-center glass clip-corners-sm text-accent hover:text-white transition-colors">
                                     <X size={20} />
                                 </button>
                             </div>
-                            <SidebarContent />
+                            <div className="text-white h-full">
+                                <SidebarContent />
+                            </div>
                         </motion.aside>
                     </>
                 )}

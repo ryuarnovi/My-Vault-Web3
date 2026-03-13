@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Download, Trash2, ExternalLink, Loader2, MoreVertical, Tag, ChevronRight } from 'lucide-react';
+import { Download, Trash2, ExternalLink, Loader2, MoreVertical, Tag, ChevronRight, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { decryptFile, importKey } from '@/lib/encryption';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
 import { updateFileInInventory } from '@/lib/vault';
@@ -100,88 +101,113 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                 )}
             </button>
 
-            {isOpen && (
-                <>
-                    <div 
-                        className="fixed inset-0 z-10" 
-                        onClick={() => setIsOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-3 w-56 glass-card border border-glass-border shadow-2xl z-[100] clip-corners-sm divide-y divide-glass-border overflow-hidden">
-                        <button 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleDownload();
-                            }}
-                            className="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black tech-text tracking-widest text-main hover:bg-accent hover:text-accent-fg transition-all uppercase"
-                        >
-                            <Download size={16} />
-                            Decrypt & Download
-                        </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsOpen(false)}
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+                        />
                         
-                        <a 
-                            href={`https://ipfs.io/ipfs/${file.cid}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="relative w-full max-w-[320px] glass-card border border-glass-border shadow-2xl clip-corners divide-y divide-glass-border overflow-hidden bg-background/80"
                         >
-                            <ExternalLink size={16} />
-                            View on IPFS
-                        </a>
-                        
-                        <button 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsEditingCategory(!isEditingCategory);
-                            }}
-                            className="w-full flex items-center justify-between px-5 py-4 text-[10px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
-                        >
-                            <div className="flex items-center gap-4">
-                                <Tag size={16} />
-                                Edit Category
+                            {/* Header */}
+                            <div className="px-6 py-4 bg-accent/5 flex items-center justify-between border-b border-glass-border">
+                                <span className="text-[10px] font-black tech-text tracking-widest text-accent uppercase">ASSET_CONTROL</span>
+                                <button onClick={() => setIsOpen(false)} className="text-muted hover:text-main transition-colors">
+                                    <X size={16} />
+                                </button>
                             </div>
-                            <ChevronRight size={14} className={`transition-transform duration-300 ${isEditingCategory ? 'rotate-90' : ''}`} />
-                        </button>
 
-                        {isEditingCategory && (
-                            <div className="bg-brand-dark/50 p-2 grid grid-cols-2 gap-1 border-t border-brand-muted/5">
-                                {FILE_CATEGORIES.map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (publicKey) {
-                                                updateFileInInventory(publicKey.toBase58(), file.id, { category: cat });
-                                                if (onUpdate) onUpdate();
-                                                setIsOpen(false);
-                                            }
-                                        }}
-                                        className={`px-3 py-2 text-[9px] font-black tech-text tracking-tight rounded-md text-left transition-all uppercase ${
-                                            file.category === cat 
-                                            ? 'bg-accent text-accent-fg' 
-                                            : 'text-muted hover:bg-accent/10 hover:text-accent'
-                                        }`}
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDownload();
+                                }}
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-main hover:bg-accent hover:text-accent-fg transition-all uppercase"
+                            >
+                                <Download size={18} />
+                                DECRYPT_&_DOWNLOAD
+                            </button>
+                            
+                            <a 
+                                href={`https://ipfs.io/ipfs/${file.cid}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
+                            >
+                                <ExternalLink size={18} />
+                                VIEW_ON_IPFS
+                            </a>
+                            
+                            <div className="bg-accent/5">
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsEditingCategory(!isEditingCategory);
+                                    }}
+                                    className="w-full flex items-center justify-between px-6 py-5 text-[11px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <Tag size={18} />
+                                        EDIT_CATEGORY
+                                    </div>
+                                    <ChevronRight size={14} className={`transition-transform duration-300 ${isEditingCategory ? 'rotate-90' : ''}`} />
+                                </button>
+
+                                {isEditingCategory && (
+                                    <motion.div 
+                                        initial={{ height: 0 }}
+                                        animate={{ height: 'auto' }}
+                                        className="px-4 pb-4 grid grid-cols-2 gap-2 overflow-hidden"
                                     >
-                                        {cat}
-                                    </button>
-                                ))}
+                                        {FILE_CATEGORIES.map(cat => (
+                                            <button
+                                                key={cat}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (publicKey) {
+                                                        updateFileInInventory(publicKey.toBase58(), file.id, { category: cat });
+                                                        if (onUpdate) onUpdate();
+                                                        setIsOpen(false);
+                                                    }
+                                                }}
+                                                className={`px-3 py-2 text-[9px] font-black tech-text tracking-tight rounded-md text-center transition-all uppercase border ${
+                                                    file.category === cat 
+                                                    ? 'bg-accent text-accent-fg border-accent' 
+                                                    : 'text-muted border-glass-border hover:border-accent hover:text-accent'
+                                                }`}
+                                            >
+                                                {cat}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
                             </div>
-                        )}
-                        
-                        <button 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (onDelete) onDelete(file.id);
-                                setIsOpen(false);
-                            }}
-                            className="w-full flex items-center gap-4 px-5 py-4 text-[10px] font-black tech-text tracking-widest text-error hover:bg-error/10 transition-all uppercase"
-                        >
-                            <Trash2 size={16} />
-                            Remove Asset
-                        </button>
+                            
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onDelete) onDelete(file.id);
+                                    setIsOpen(false);
+                                }}
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-error hover:bg-error/10 transition-all uppercase"
+                            >
+                                <Trash2 size={18} />
+                                REMOVE_ASSET
+                            </button>
+                        </motion.div>
                     </div>
-                </>
-            )}
+                )}
+            </AnimatePresence>
         </div>
     );
 };
