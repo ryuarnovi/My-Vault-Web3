@@ -33,3 +33,12 @@ export const updateFileInInventory = (walletAddress: string, fileId: string, upd
     
     localStorage.setItem(`${STORAGE_KEY}_${walletAddress}`, JSON.stringify(newInventory));
 };
+export const removeFileFromInventory = (walletAddress: string, fileId: string) => {
+    if (typeof window === 'undefined') return;
+    
+    const inventory = getFileInventory(walletAddress);
+    const newInventory = inventory.filter(f => f.id !== fileId);
+    
+    localStorage.setItem(`${STORAGE_KEY}_${walletAddress}`, JSON.stringify(newInventory));
+    return newInventory;
+};

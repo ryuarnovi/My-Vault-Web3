@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { VaultDashboard } from '@/components/VaultDashboard';
 import { HardDrive, Share2, ShieldCheck, History, Plus, Files, MoreVertical } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { getFileInventory } from '@/lib/vault';
+import { getFileInventory, removeFileFromInventory } from '@/lib/vault';
 import { FileActionMenu } from '@/components/FileActionMenu';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -72,22 +72,13 @@ function DashboardContent() {
 
     const handleDelete = async (file: any) => {
         if (!publicKey) return;
-        if (confirm(`Are you sure you want to permanently delete "${file.name}"?`)) {
+        if (confirm(`Permanently delete "${file.name}"?\n(This will hide it immediately and attempt to purge from IPFS.)`)) {
             try {
-                // 1. Attempt Remove from Pinata
-                const res = await fetch('/api/files/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cid: file.cid })
-                });
-
-                // 2. Remove from Local (Always do this)
-                const inventory = getFileInventory(publicKey.toBase58());
-                const newInventory = inventory.filter(f => f.id !== file.id);
-                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
+                // 1. Instant Local Delete
+                const newInventory = removeFileFromInventory(publicKey.toBase58(), file.id) || [];
                 
-                // Update state
-                const sorted = [...newInventory].sort((a, b) => b.uploadedAt - a.uploadedAt);
+                // Update state immediately
+                const sorted = [...newInventory].sort((a: any, b: any) => b.uploadedAt - a.uploadedAt);
                 setFiles(sorted.slice(0, 5));
                 
                 const totalSize = newInventory.reduce((acc: number, f: any) => acc + f.size, 0);
@@ -99,17 +90,19 @@ function DashboardContent() {
                     shared: 0
                 });
 
-                if (!res.ok) {
-                    alert('LOCAL_REMOVAL_SUCCESS: REMOTE_SYNC_FAILED_BUT_VAULT_IS_CLEAN');
-                }
+                // 2. Background Sync
+                fetch('/api/files/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cid: file.cid })
+                }).then(res => {
+                    if (res.ok) console.log('✅ Remote purge synced');
+                    else console.warn('⚠️ Remote purge sync delayed');
+                }).catch(e => console.error('❌ Remote sync error:', e));
+
             } catch (err) {
                 console.error('Delete process failed:', err);
-                // Fallback local remove
-                const inventory = getFileInventory(publicKey.toBase58());
-                const newInventory = inventory.filter(f => f.id !== file.id);
-                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
-                setFiles(newInventory.slice(0, 5));
-                alert('LOCAL_REMOVAL_COMPLETE: NETWORK_ERROR_DURING_SYNC');
+                alert('FAILED_TO_REMOVE_LOCAL_ASSET');
             }
         }
     };

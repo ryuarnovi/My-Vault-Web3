@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { VaultDashboard } from '@/components/VaultDashboard';
 import { Files, Search, Filter, Plus, Copy, RefreshCw, Globe, Shield, CheckCircle2, Trash2 } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { getFileInventory, saveFileToInventory } from '@/lib/vault';
+import { getFileInventory, saveFileToInventory, removeFileFromInventory } from '@/lib/vault';
 import { FileActionMenu } from '@/components/FileActionMenu';
 import { useSearchParams } from 'next/navigation';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
@@ -21,6 +21,7 @@ function FilesContent() {
     const [activeCategory, setActiveCategory] = React.useState<string>('All');
     const [viewMode, setViewMode] = React.useState<'local' | 'remote'>('local');
     const [isScanning, setIsScanning] = React.useState(false);
+    const [deletingCids, setDeletingCids] = React.useState<Set<string>>(new Set());
     const [error, setError] = React.useState<string | null>(null);
 
     const loadLocalFiles = React.useCallback(() => {
@@ -113,71 +114,64 @@ function FilesContent() {
     const handleDelete = async (file: VaultFile) => {
         if (!publicKey) return;
         
-        const confirmMsg = `Are you sure you want to permanently delete "${file.name}"?\n\nThis will remove it from your Private Vault AND attempt to purge it from the IPFS network.`;
+        console.log('🗑️ INITIATING_LOCAL_DELETE:', file.id);
+        const confirmMsg = `Permanently delete "${file.name}"?\n(This will hide it immediately and attempt to purge from IPFS.)`;
         
         if (confirm(confirmMsg)) {
             try {
-                // 1. Remove from Pinata (Remote) - Fire and forget or handle gracefully
-                setIsScanning(true); 
-                const pinataRes = await fetch('/api/files/delete', {
+                // 1. Instant Local Delete
+                removeFileFromInventory(publicKey.toBase58(), file.id);
+                loadLocalFiles();
+                console.log('✅ LOCAL_VAULT_CLEANED');
+
+                // 2. Background Remote Purge
+                fetch('/api/files/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cid: file.cid })
-                });
+                }).then(res => {
+                    if (res.ok) console.log('✅ REMOTE_PURGE_COMPLETE:', file.cid);
+                    else console.warn('⚠️ REMOTE_PURGE_SYNC_DELAYED');
+                }).catch(e => console.error('❌ REMOTE_SYNC_ERROR:', e));
 
-                if (!pinataRes.ok) {
-                    console.error('Remote purge failed, but proceeding with local removal');
-                }
-
-                // 2. Remove from Local Inventory
-                const inventory = getFileInventory(publicKey.toBase58());
-                const newInventory = inventory.filter(f => f.id !== file.id);
-                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
-                
-                loadLocalFiles();
-                
-                if (pinataRes.ok) {
-                    alert('ASSET_PURGED_SUCCESSFULLY');
-                } else {
-                    alert('LOCAL_ASSET_REMOVED: REMOTE_PURGE_FAILED_BUT_IPFS_DATA_MAY_STILL_BE_CACHED');
-                }
             } catch (err: any) {
-                console.error('Delete process encountered an error:', err);
-                // Still try to delete locally even on fetch throw
-                const inventory = getFileInventory(publicKey.toBase58());
-                const newInventory = inventory.filter(f => f.id !== file.id);
-                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
-                loadLocalFiles();
-                alert('LOCAL_REMOVAL_COMPLETE: NETWORK_COMMUNICATION_ERROR_DURING_REMOTE_PURGE');
-            } finally {
-                setIsScanning(false);
+                console.error('CRITICAL_DELETE_ERROR:', err);
+                alert('FAILED_TO_REMOVE_LOCAL_ASSET');
             }
         }
     };
 
     const handleRemoteDelete = async (rf: any) => {
         if (!publicKey) return;
-        if (!confirm(`Permanently purge "${rf.metadata?.name || rf.ipfs_pin_hash}" from Pinata?`)) return;
+        const cid = rf.ipfs_pin_hash;
+        console.log('🗑️ INITIATING_REMOTE_PURGE:', cid);
+        
+        if (!confirm(`Permanently purge "${rf.metadata?.name || cid}" from IPFS storage?`)) return;
 
-        setIsScanning(true);
+        setDeletingCids(prev => new Set(prev).add(cid));
         try {
             const res = await fetch('/api/files/delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cid: rf.ipfs_pin_hash })
+                body: JSON.stringify({ cid })
             });
 
             if (res.ok) {
-                setRemoteFiles(prev => prev.filter(f => f.ipfs_pin_hash !== rf.ipfs_pin_hash));
-                alert('REMOTE_ASSET_PURGED_SUCCESSFULLY');
+                setRemoteFiles(prev => prev.filter(f => f.ipfs_pin_hash !== cid));
+                console.log('✅ REMOTE_ASSET_PURGED');
             } else {
                 const data = await res.json();
                 throw new Error(data.error || 'UNPIN_FAILED');
             }
         } catch (err: any) {
-            alert(`REMOTE_PURGE_FAILED: ${err.message}`);
+            console.error('REMOTE_PURGE_ERROR:', err);
+            alert(`PURGE_FAILED: ${err.message}`);
         } finally {
-            setIsScanning(false);
+            setDeletingCids(prev => {
+                const updated = new Set(prev);
+                updated.delete(cid);
+                return updated;
+            });
         }
     };
 
@@ -407,11 +401,15 @@ function FilesContent() {
                                                         RESTORE
                                                     </button>
                                                     <button 
-                                                        onClick={() => handleRemoteDelete(rf)}
-                                                        className="p-2 rounded-lg glass text-error hover:bg-error/10 transition-all border border-error/20"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleRemoteDelete(rf);
+                                                        }}
+                                                        disabled={deletingCids.has(rf.ipfs_pin_hash)}
+                                                        className="p-2 rounded-lg glass text-error hover:bg-error/10 transition-all border border-error/20 disabled:opacity-50"
                                                         title="PURGE_FROM_REMOTE"
                                                     >
-                                                        <Trash2 size={14} />
+                                                        {deletingCids.has(rf.ipfs_pin_hash) ? <RefreshCw size={14} className="animate-spin" /> : <Trash2 size={14} />}
                                                     </button>
                                                 </div>
                                             </td>
