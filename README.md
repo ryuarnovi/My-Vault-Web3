@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vault3 - Secure Web3 Personal Vault
+
+Vault3 is a decentralized, end-to-end encrypted personal file storage solution built on **Solana** and **IPFS (via Pinata)**.
+
+![Dashboard Preview](./public/images/image.png)
+![Upload Interface](./public/images/image2.png)
+
+## Features
+
+- 🔐 **End-to-End Encryption**: Files are encrypted in your browser using AES-256 before being uploaded.
+- 🌐 **Decentralized Storage**: Files are stored on IPFS, ensuring your data is distributed and resilient.
+- ⛓️ **Solana Proof of Existence**: Optionally record your file's CID and hash on the Solana blockchain for immutable proof.
+- 🛡️ **Gated Access**: Restricted access to specific Solana wallet addresses (Master Wallet).
+- 📁 **Category Management**: Organize your files into categories like Documents, Images, Passcodes, etc.
+- ✨ **Premium UI**: Modern macOS-inspired design with glassmorphism and smooth animations.
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Blockchain**: Solana (@solana/web3.js)
+- **Storage**: IPFS (Pinata)
+- **Styling**: Tailwind CSS v4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18+
+- Solana Wallet (e.g., Phantom)
+- Pinata API Keys
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+PINATA_JWT=your_pinata_jwt
+NEXT_PUBLIC_PINATA_GATEWAY=your_pinata_gateway_url
+NEXT_PUBLIC_SOLANA_RPC=https://api.mainnet-beta.solana.com
+NEXT_PUBLIC_ALLOWED_WALLET=your_authorized_solana_address
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Security
 
-## Learn More
+Vault3 prioritizes user privacy. Encryption keys never leave your browser. Even if the IPFS gateway or storage provider is compromised, your files remain unreadable without your private key stored in your local vault metadata.
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

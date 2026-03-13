@@ -1,42 +1,111 @@
+@import "tailwindcss";
+
+/** 
+ * Design System Tokens (Tailwind v4)
+ */
+@theme {
+  --color-brand-dark: #30364F;
+  --color-brand-muted: #ACBAC4;
+  --color-brand-gold: #E1D9BC;
+  --color-brand-light: #F0F0DB;
+  
+  --color-success: #10b981;
+  --color-error: #ef4444;
+}
+
+/**
+ * Base Overrides with Fallbacks
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  --background-start: #30364F;
+  --background-end: #1e2235;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+  background-color: #30364F;
+  color: #F0F0DB;
+  background: radial-gradient(circle at top right, #30364F, #1e2235);
+  background-attachment: fixed;
   margin: 0;
+  min-height: 100vh;
+  font-family: 'Outfit', ui-sans-serif, system-ui, sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/**
+ * Premium Component Styles (Compatible with or without @apply)
+ */
+.glass-card {
+  background-color: rgba(48, 54, 79, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(172, 186, 196, 0.15);
+  border-radius: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.premium-button {
+  background: linear-gradient(135deg, #E1D9BC, #ACBAC4);
+  color: #30364F;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.premium-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(225, 217, 188, 0.3);
+  filter: brightness(1.05);
+}
+
+.premium-button:active {
+  transform: translateY(0);
+}
+
+.premium-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #F0F0DB, #ACBAC4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.accent-gradient {
+  background: linear-gradient(135deg, #E1D9BC, #ACBAC4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Modal and Wallet UI Overrides */
+.wallet-adapter-modal-wrapper {
+  background-color: #30364F !important;
+  border: 1px solid rgba(172, 186, 196, 0.2) !important;
+  border-radius: 20px !important;
+}
+
+.wallet-adapter-button-trigger {
+  background: linear-gradient(135deg, #E1D9BC, #ACBAC4) !important;
+  color: #30364F !important;
+  border-radius: 12px !important;
 }
