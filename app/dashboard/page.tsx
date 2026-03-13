@@ -87,7 +87,7 @@ function DashboardContent() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                 >
-                    <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-3 text-main tracking-tighter leading-none">
+                    <h1 className="text-2xl sm:text-4xl lg:text-6xl font-black mb-3 text-main tracking-tighter leading-none">
                         DASHBOARD_<span className="text-accent">OVERVIEW</span>
                     </h1>
                     <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60">
