@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Download, Trash2, ExternalLink, Loader2, MoreVertical, Tag, ChevronRight, X } from 'lucide-react';
+import { Download, Trash2, ExternalLink, Loader2, MoreVertical, Tag, ChevronRight, X, Eye } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { decryptFile, importKey } from '@/lib/encryption';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
@@ -20,7 +20,7 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
     const [isDownloading, setIsDownloading] = useState(false);
     const [isEditingCategory, setIsEditingCategory] = useState(false);
 
-    const handleDownload = async () => {
+    const handleDownload = async (previewOnly = false) => {
         try {
             setIsDownloading(true);
             
@@ -29,52 +29,66 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
             if (!gateway.startsWith('http')) gateway = `https://${gateway}`;
             if (!gateway.endsWith('/')) gateway += '/';
             
-            // Pinata dedicated gateways usually use /ipfs/ prefix
             const downloadUrl = `${gateway}ipfs/${file.cid}`;
             
             console.log('Fetching from:', downloadUrl);
             const response = await fetch(downloadUrl);
             
             if (!response.ok) {
-                console.error('Fetch error:', response.status, response.statusText);
-                throw new Error('Failed to fetch from IPFS gateway. Please check your gateway configuration.');
+                throw new Error('Failed to fetch from IPFS gateway.');
             }
             
             const encryptedData = await response.arrayBuffer();
             
             // 2. Decrypt or Download
             let finalData: ArrayBuffer;
+            let isDecrypted = false;
             
-            if (file.isEncrypted && file.metadata) {
+            if (file.isEncrypted && file.metadata?.encryptionKey && file.metadata?.iv) {
                 console.log('Decrypting file...');
-                const key = await importKey(file.metadata.encryptionKey);
-                
-                // Use global Buffer or fallback to base64 decoder
-                const iv = new Uint8Array(
-                    typeof Buffer !== 'undefined' 
-                    ? Buffer.from(file.metadata.iv, 'base64') 
-                    : Uint8Array.from(atob(file.metadata.iv), c => c.charCodeAt(0))
-                );
-                
-                finalData = await decryptFile(encryptedData, key, iv);
+                try {
+                    const key = await importKey(file.metadata.encryptionKey);
+                    const iv = new Uint8Array(
+                        typeof Buffer !== 'undefined' 
+                        ? Buffer.from(file.metadata.iv, 'base64') 
+                        : Uint8Array.from(atob(file.metadata.iv), c => c.charCodeAt(0))
+                    );
+                    finalData = await decryptFile(encryptedData, key, iv);
+                    isDecrypted = true;
+                } catch (e) {
+                    console.error('Decryption failed, using raw data:', e);
+                    finalData = encryptedData;
+                }
             } else {
                 finalData = encryptedData;
             }
             
-            // 3. Trigger Browser Download
-            const blob = new Blob([finalData], { type: file.type || 'application/octet-stream' });
+            // 3. Handle Actions
+            const blobType = isDecrypted ? (file.type || 'application/octet-stream') : 'application/octet-stream';
+            const blob = new Blob([finalData], { type: blobType });
             const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name;
-            document.body.appendChild(a);
-            a.click();
+
+            if (previewOnly) {
+                window.open(url, '_blank');
+            } else {
+                const a = document.createElement('a');
+                a.href = url;
+                // Strip .enc suffix if we decrypted it successfully
+                let fileName = file.name;
+                if (isDecrypted && fileName.endsWith('.enc')) {
+                    fileName = fileName.slice(0, -4);
+                }
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            
             window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
             
         } catch (error: any) {
-            console.error('Download failed:', error);
-            alert(`Download failed: ${error.message}`);
+            console.error('Action failed:', error);
+            alert(`Operation failed: ${error.message}`);
         } finally {
             setIsDownloading(false);
             setIsOpen(false);
@@ -129,7 +143,18 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                             <button 
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDownload();
+                                    handleDownload(true);
+                                }}
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-accent hover:bg-accent/10 transition-all uppercase"
+                            >
+                                <Eye size={18} />
+                                VIEW_DECRYPTED
+                            </button>
+
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDownload(false);
                                 }}
                                 className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-main hover:bg-accent hover:text-accent-fg transition-all uppercase"
                             >
@@ -142,10 +167,10 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-muted hover:bg-accent/10 hover:text-accent transition-all uppercase"
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-muted hover:bg-white/5 transition-all uppercase"
                             >
                                 <ExternalLink size={18} />
-                                VIEW_ON_IPFS
+                                OPEN_RAW_IPFS (ENCRYPTED)
                             </a>
                             
                             <div className="bg-accent/5">
