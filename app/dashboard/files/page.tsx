@@ -41,7 +41,9 @@ function FilesContent() {
 
     React.useEffect(() => {
         loadLocalFiles();
-    }, [loadLocalFiles]);
+        // Proactive sync: scan remote files on mount
+        if (publicKey) scanRemote();
+    }, [publicKey]); // Only re-run if wallet changes
 
     const scanRemote = async () => {
         if (!publicKey) return;
@@ -70,26 +72,34 @@ function FilesContent() {
         const localInventory = getFileInventory(publicKey.toBase58());
         const exists = localInventory.some(f => f.cid === rf.ipfs_pin_hash);
         
-        if (exists) {
-            alert('ASSET_ALREADY_IN_LOCAL_VAULT');
-            return;
-        }
+        if (exists) return; // Silent skip for batch sync
 
+        const kv = rf.metadata?.keyvalues || {};
+        
         const newFile: VaultFile = {
-            id: Math.random().toString(36).substring(7),
-            name: rf.metadata?.name || 'RESTORED_ASSET',
+            id: rf.id || Math.random().toString(36).substring(7),
+            name: rf.metadata?.name || 'SYNCED_ASSET',
             cid: rf.ipfs_pin_hash,
             size: rf.size,
             uploadedAt: new Date(rf.date_pinned).getTime(),
-            category: 'Other',
-            isEncrypted: rf.metadata?.keyvalues?.isEncrypted === 'true' || true,
+            category: kv.category || 'Other',
+            isEncrypted: kv.isEncrypted === 'true' || true,
             type: 'application/octet-stream',
-            walletAddress: publicKey.toBase58()
+            walletAddress: publicKey.toBase58(),
+            metadata: {
+                iv: kv.iv,
+                encryptionKey: kv.encryptionKey
+            }
         };
 
         saveFileToInventory(publicKey.toBase58(), newFile);
         loadLocalFiles();
-        alert('ASSET_RESTORED_SUCCESSFULLY');
+    };
+
+    const syncAll = () => {
+        if (!remoteFiles.length) return;
+        remoteFiles.forEach(handleImport);
+        alert('SYNCHRONIZATION_COMPLETE: ALL_REMOTE_ASSETS_RESTORED');
     };
 
     const copyToClipboard = (text: string) => {
@@ -270,13 +280,27 @@ function FilesContent() {
                                 {isScanning ? 'SCANNING_IPFS_NETWORK_STREAMS...' : 'NO_REMOTE_ASSETS_FOUND_ON_THIS_WALLET'}
                             </p>
                             {!isScanning && (
-                                <button onClick={scanRemote} className="text-accent underline tech-text text-xs uppercase tracking-widest">
-                                    RETRY_DEEP_SCAN
-                                </button>
+                                <div className="flex gap-4">
+                                    <button onClick={scanRemote} className="text-accent underline tech-text text-xs uppercase tracking-widest">
+                                        RETRY_DEEP_SCAN
+                                    </button>
+                                </div>
                             )}
                         </div>
                     ) : (
                         <div className="overflow-x-auto custom-scrollbar">
+                            <div className="flex justify-between items-center p-4 bg-accent/5 border-b border-glass-border">
+                                <span className="text-[10px] font-black tech-text tracking-widest text-muted uppercase">
+                                    {remoteFiles.length} REMOTE_ASSETS_DISCOVERED
+                                </span>
+                                <button 
+                                    onClick={syncAll}
+                                    className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-fg text-[9px] font-black uppercase tech-text tracking-widest rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20"
+                                >
+                                    <RefreshCw size={12} />
+                                    SYNC_ALL_TO_VAULT
+                                </button>
+                            </div>
                             <table className="w-full text-left border-collapse min-w-[700px]">
                                 <thead>
                                     <tr className="border-b border-glass-border bg-white/[0.02]">

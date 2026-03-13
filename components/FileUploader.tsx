@@ -48,6 +48,15 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             formData.append('wallet', publicKey.toBase58());
             formData.append('isEncrypted', 'true');
 
+            // Send metadata including IV and Key for cross-device sync
+            const b64Iv = Buffer.from(iv).toString('base64');
+            const b64Key = await exportKey(key);
+            formData.append('metadata', JSON.stringify({
+                iv: b64Iv,
+                encryptionKey: b64Key,
+                category: category
+            }));
+
             // 3. Upload to API Bridge
             const response = await fetch('/api/upload', {
                 method: 'POST',

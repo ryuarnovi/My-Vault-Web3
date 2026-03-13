@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
             name: file.name,
             keyvalues: {
                 wallet: formData.get('wallet') || 'unknown',
-                isEncrypted: formData.get('isEncrypted') || 'true'
+                isEncrypted: formData.get('isEncrypted') || 'true',
+                ...(formData.get('metadata') ? JSON.parse(formData.get('metadata') as string) : {})
             }
         });
         pinataData.append('pinataMetadata', pinataMetadata);
