@@ -114,15 +114,17 @@ function FilesContent() {
     const handleDelete = async (file: VaultFile) => {
         if (!publicKey) return;
         
-        console.log('🗑️ INITIATING_LOCAL_DELETE:', file.id);
-        const confirmMsg = `Permanently delete "${file.name}"?\n(This will hide it immediately and attempt to purge from IPFS.)`;
+        console.log('🗑️ CLICK_DETECTED: handleDelete for', file.name);
+        // Using window.confirm explicitly to avoid confusion with local variables
+        const isConfirmed = window.confirm(`Permanently delete "${file.name}"?\n(This will hide it immediately and attempt to purge from IPFS.)`);
         
-        if (confirm(confirmMsg)) {
+        if (isConfirmed) {
+            console.log('✅ CONFIRMED: Proceeding with deletion');
             try {
                 // 1. Instant Local Delete
                 removeFileFromInventory(publicKey.toBase58(), file.id);
                 loadLocalFiles();
-                console.log('✅ LOCAL_VAULT_CLEANED');
+                console.log('✨ LOCAL_INVENTORY_UPDATED');
 
                 // 2. Background Remote Purge
                 fetch('/api/files/delete', {
@@ -130,24 +132,30 @@ function FilesContent() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cid: file.cid })
                 }).then(res => {
-                    if (res.ok) console.log('✅ REMOTE_PURGE_COMPLETE:', file.cid);
-                    else console.warn('⚠️ REMOTE_PURGE_SYNC_DELAYED');
-                }).catch(e => console.error('❌ REMOTE_SYNC_ERROR:', e));
+                    console.log('📡 REMOTE_PURGE_RESPONSE:', res.status);
+                }).catch(e => console.error('❌ REMOTE_PURGE_FETCH_ERROR:', e));
 
             } catch (err: any) {
-                console.error('CRITICAL_DELETE_ERROR:', err);
+                console.error('🔥 DELETE_FATAL_ERROR:', err);
                 alert('FAILED_TO_REMOVE_LOCAL_ASSET');
             }
+        } else {
+            console.log('❌ CANCELLED: Deletion aborted by user');
         }
     };
 
     const handleRemoteDelete = async (rf: any) => {
         if (!publicKey) return;
         const cid = rf.ipfs_pin_hash;
-        console.log('🗑️ INITIATING_REMOTE_PURGE:', cid);
+        console.log('🗑️ CLICK_DETECTED: handleRemoteDelete for', cid);
         
-        if (!confirm(`Permanently purge "${rf.metadata?.name || cid}" from IPFS storage?`)) return;
+        const isConfirmed = window.confirm(`Permanently purge "${rf.metadata?.name || cid}" from IPFS storage?`);
+        if (!isConfirmed) {
+            console.log('❌ CANCELLED: Remote purge aborted');
+            return;
+        }
 
+        console.log('⏳ STARTING_REMOTE_PURGE_PROCESS');
         setDeletingCids(prev => new Set(prev).add(cid));
         try {
             const res = await fetch('/api/files/delete', {
@@ -156,15 +164,18 @@ function FilesContent() {
                 body: JSON.stringify({ cid })
             });
 
+            console.log('📡 REMOTE_RESPONSE_STATUS:', res.status);
+
             if (res.ok) {
                 setRemoteFiles(prev => prev.filter(f => f.ipfs_pin_hash !== cid));
-                console.log('✅ REMOTE_ASSET_PURGED');
+                console.log('✨ REMOTE_FILE_REMOVED_FROM_STATE');
             } else {
                 const data = await res.json();
+                console.error('❌ REMOTE_PURGE_API_ERROR:', data.error);
                 throw new Error(data.error || 'UNPIN_FAILED');
             }
         } catch (err: any) {
-            console.error('REMOTE_PURGE_ERROR:', err);
+            console.error('🔥 REMOTE_PURGE_FETCH_ERROR:', err);
             alert(`PURGE_FAILED: ${err.message}`);
         } finally {
             setDeletingCids(prev => {
@@ -402,14 +413,18 @@ function FilesContent() {
                                                     </button>
                                                     <button 
                                                         onClick={(e) => {
+                                                            e.preventDefault();
                                                             e.stopPropagation();
                                                             handleRemoteDelete(rf);
                                                         }}
                                                         disabled={deletingCids.has(rf.ipfs_pin_hash)}
-                                                        className="p-2 rounded-lg glass text-error hover:bg-error/10 transition-all border border-error/20 disabled:opacity-50"
+                                                        className="p-2 rounded-lg glass text-error hover:bg-error/10 transition-all border border-error/20 disabled:opacity-50 relative z-20"
                                                         title="PURGE_FROM_REMOTE"
                                                     >
-                                                        {deletingCids.has(rf.ipfs_pin_hash) ? <RefreshCw size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                                                        {deletingCids.has(rf.ipfs_pin_hash) ? 
+                                                            <RefreshCw size={14} className="animate-spin pointer-events-none" /> : 
+                                                            <Trash2 size={14} className="pointer-events-none" />
+                                                        }
                                                     </button>
                                                 </div>
                                             </td>

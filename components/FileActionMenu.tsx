@@ -15,8 +15,9 @@ interface FileActionMenuProps {
 }
 
 export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps) => {
+    console.log('🏗️ RENDERING_ACTION_MENU_FOR:', file.name);
     const { publicKey } = useWallet();
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = React.useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isEditingCategory, setIsEditingCategory] = useState(false);
 
@@ -95,23 +96,37 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
         }
     };
 
+    const handleConfirmDelete = () => {
+        console.log('🗑️ REMOVE_ASSET_CLICKED');
+        const confirmed = window.confirm(`Are you sure you want to remove "${file.name}"? This action cannot be undone.`);
+        if (confirmed) {
+            console.log('✅ DELETE_CONFIRMED');
+            if (onDelete) {
+                onDelete(file);
+            }
+            setIsOpen(false);
+        } else {
+            console.log('❌ DELETE_CANCELLED');
+        }
+    };
+
     return (
         <div className="relative">
             <button 
                 onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
+                    console.log('🔘 TRIGGER_CLICKED: Toggle menu', !isOpen);
                     setIsOpen(!isOpen);
                 }}
-                className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 ${
-                    isOpen 
-                    ? 'bg-brand-gold/20 text-brand-gold' 
-                    : 'text-brand-muted/40 hover:bg-white/5 hover:text-brand-gold'
+                className={`p-2 rounded-lg transition-all duration-300 relative z-30 ${
+                    isOpen ? 'bg-accent text-accent-fg' : 'text-muted hover:bg-white/5'
                 }`}
             >
                 {isDownloading ? (
-                    <Loader2 size={18} className="animate-spin text-brand-gold" />
+                    <Loader2 size={18} className="animate-spin text-brand-gold pointer-events-none" />
                 ) : (
-                    <MoreVertical size={18} />
+                    <MoreVertical size={18} className="pointer-events-none" />
                 )}
             </button>
 
@@ -142,23 +157,23 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
 
                             <button 
                                 onClick={(e) => {
-                                    e.stopPropagation();
+                                    console.log('👀 VIEW_DECRYPTED_CLICKED');
                                     handleDownload(true);
                                 }}
-                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-accent hover:bg-accent/10 transition-all uppercase"
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-accent hover:bg-accent/10 transition-all uppercase z-[110]"
                             >
-                                <Eye size={18} />
+                                <Eye size={18} className="pointer-events-none" />
                                 VIEW_DECRYPTED
                             </button>
 
                             <button 
                                 onClick={(e) => {
-                                    e.stopPropagation();
+                                    console.log('📥 DOWNLOAD_CLICKED');
                                     handleDownload(false);
                                 }}
-                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-main hover:bg-accent hover:text-accent-fg transition-all uppercase"
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-main hover:bg-accent hover:text-accent-fg transition-all uppercase z-[110]"
                             >
-                                <Download size={18} />
+                                <Download size={18} className="pointer-events-none" />
                                 DECRYPT_&_DOWNLOAD
                             </button>
                             
@@ -220,13 +235,13 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                             
                             <button 
                                 onClick={(e) => {
+                                    e.preventDefault();
                                     e.stopPropagation();
-                                    if (onDelete) onDelete(file as any);
-                                    setIsOpen(false);
+                                    handleConfirmDelete();
                                 }}
-                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-error hover:bg-error/10 transition-all uppercase"
+                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-error hover:bg-error/10 transition-all uppercase z-[110] relative"
                             >
-                                <Trash2 size={18} />
+                                <Trash2 size={18} className="pointer-events-none" />
                                 REMOVE_ASSET
                             </button>
                         </motion.div>
