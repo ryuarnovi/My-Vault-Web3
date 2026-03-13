@@ -70,13 +70,38 @@ function DashboardContent() {
         return new Date(ts).toLocaleDateString();
     };
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (file: any) => {
         if (!publicKey) return;
-        if (confirm('Are you sure you want to remove this file?')) {
-            const inventory = getFileInventory(publicKey.toBase58());
-            const newInventory = inventory.filter(f => f.id !== id);
-            localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
-            setFiles(newInventory.slice(0, 5));
+        if (confirm(`Are you sure you want to permanently delete "${file.name}"?`)) {
+            try {
+                // Remove from Pinata
+                await fetch('/api/files/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cid: file.cid })
+                });
+
+                // Remove from Local
+                const inventory = getFileInventory(publicKey.toBase58());
+                const newInventory = inventory.filter(f => f.id !== file.id);
+                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
+                
+                // Update stats locally
+                const sorted = [...newInventory].sort((a, b) => b.uploadedAt - a.uploadedAt);
+                setFiles(sorted.slice(0, 5));
+                
+                const totalSize = newInventory.reduce((acc: number, f: any) => acc + f.size, 0);
+                setStats({
+                    usage: totalSize > 1024 * 1024 
+                        ? `${(totalSize / (1024 * 1024)).toFixed(1)} MB` 
+                        : `${(totalSize / 1024).toFixed(1)} KB`,
+                    count: newInventory.length,
+                    shared: 0
+                });
+            } catch (err) {
+                console.error('Delete failed:', err);
+                alert('FAILED_TO_PURGE_FROM_REMOTE');
+            }
         }
     };
 

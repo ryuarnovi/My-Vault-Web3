@@ -110,13 +110,39 @@ function FilesContent() {
         navigator.clipboard.writeText(text);
     };
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (file: VaultFile) => {
         if (!publicKey) return;
-        if (confirm('Are you sure you want to remove this file?')) {
-            const inventory = getFileInventory(publicKey.toBase58());
-            const newInventory = inventory.filter(f => f.id !== id);
-            localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
-            loadLocalFiles();
+        
+        const confirmMsg = `Are you sure you want to permanently delete "${file.name}"?\n\nThis will remove it from your Private Vault AND the IPFS network.`;
+        
+        if (confirm(confirmMsg)) {
+            try {
+                // 1. Remove from Pinata (Remote)
+                setIsScanning(true); // Reuse scanning state for loading feedback
+                const pinataRes = await fetch('/api/files/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cid: file.cid })
+                });
+
+                if (!pinataRes.ok) {
+                    const error = await pinataRes.json();
+                    throw new Error(error.error || 'UNPIN_FAILED');
+                }
+
+                // 2. Remove from Local Inventory
+                const inventory = getFileInventory(publicKey.toBase58());
+                const newInventory = inventory.filter(f => f.id !== file.id);
+                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
+                
+                loadLocalFiles();
+                alert('ASSET_PURGED_SUCCESSFULLY');
+            } catch (err: any) {
+                console.error('Delete failed:', err);
+                alert(`PURGE_FAILED: ${err.message}`);
+            } finally {
+                setIsScanning(false);
+            }
         }
     };
 

@@ -10,7 +10,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 interface FileActionMenuProps {
     file: VaultFile;
-    onDelete?: (id: string) => void;
+    onDelete?: (file: VaultFile) => void;
     onUpdate?: () => void;
 }
 
@@ -221,7 +221,7 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                             <button 
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    if (onDelete) onDelete(file.id);
+                                    if (onDelete) onDelete(file as any);
                                     setIsOpen(false);
                                 }}
                                 className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-error hover:bg-error/10 transition-all uppercase"
