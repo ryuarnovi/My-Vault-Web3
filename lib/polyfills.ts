@@ -14,11 +14,14 @@ if (typeof window !== 'undefined') {
         (window as any).process = { 
             env: {},
             browser: true,
-            version: '',
-            nextTick: (cb: Function) => setTimeout(cb, 0)
+            version: 'v16.0.0', // Some libs check for version
+            nextTick: (cb: Function) => setTimeout(cb, 0),
+            cwd: () => '/',
+            platform: 'browser'
         };
-    } else if (!(window as any).process.env) {
-        (window as any).process.env = {};
+    } else {
+        if (!(window as any).process.env) (window as any).process.env = {};
+        if (!(window as any).process.version) (window as any).process.version = 'v16.0.0';
     }
     
     console.log('✅ Core Polyfills (Buffer, global, process) Loaded');

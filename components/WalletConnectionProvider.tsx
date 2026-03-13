@@ -4,6 +4,7 @@ import React, { FC, useMemo, useEffect, useState } from 'react';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 
 /**
  * WalletConnectionProvider — Wrapper Client Component untuk semua provider Solana.
@@ -22,8 +23,11 @@ export const WalletConnectionProvider: FC<{ children: React.ReactNode }> = ({ ch
         return process.env.NEXT_PUBLIC_SOLANA_RPC || "https://solana-rpc.publicnode.com";
     }, []);
 
-    // Gunakan array kosong untuk wallets (Wallet Standard)
-    const wallets = useMemo(() => [], []);
+    // Explicitly add common wallets for better mobile support
+    const wallets = useMemo(() => [
+        new PhantomWalletAdapter(),
+        new SolflareWalletAdapter(),
+    ], []);
 
     // PENTING: Provider HARUS selalu merender children di dalam WalletProvider 
     // agar useWallet() tidak error "Context without providing one".
