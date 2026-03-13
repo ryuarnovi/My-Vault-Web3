@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { VaultDashboard } from '@/components/VaultDashboard';
 import { Files, Search, Filter, Plus, Copy, RefreshCw, Globe, Shield, CheckCircle2 } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { getFileInventory } from '@/lib/vault';
+import { getFileInventory, saveFileToInventory } from '@/lib/vault';
 import { FileActionMenu } from '@/components/FileActionMenu';
 import { useSearchParams } from 'next/navigation';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
@@ -44,10 +44,11 @@ function FilesContent() {
     }, [loadLocalFiles]);
 
     const scanRemote = async () => {
+        if (!publicKey) return;
         setIsScanning(true);
         setError(null);
         try {
-            const res = await fetch('/api/files');
+            const res = await fetch(`/api/files?wallet=${publicKey.toBase58()}`);
             if (!res.ok) throw new Error('API_COMMUNICATION_FAILURE');
             const data = await res.json();
             if (data.files) {
@@ -60,6 +61,35 @@ function FilesContent() {
         } finally {
             setIsScanning(false);
         }
+    };
+
+    const handleImport = (rf: any) => {
+        if (!publicKey) return;
+        
+        // Check if already in local
+        const localInventory = getFileInventory(publicKey.toBase58());
+        const exists = localInventory.some(f => f.cid === rf.ipfs_pin_hash);
+        
+        if (exists) {
+            alert('ASSET_ALREADY_IN_LOCAL_VAULT');
+            return;
+        }
+
+        const newFile: VaultFile = {
+            id: Math.random().toString(36).substring(7),
+            name: rf.metadata?.name || 'RESTORED_ASSET',
+            cid: rf.ipfs_pin_hash,
+            size: rf.size,
+            uploadedAt: new Date(rf.date_pinned).getTime(),
+            category: 'Other',
+            isEncrypted: rf.metadata?.keyvalues?.isEncrypted === 'true' || true,
+            type: 'application/octet-stream',
+            walletAddress: publicKey.toBase58()
+        };
+
+        saveFileToInventory(publicKey.toBase58(), newFile);
+        loadLocalFiles();
+        alert('ASSET_RESTORED_SUCCESSFULLY');
     };
 
     const copyToClipboard = (text: string) => {
@@ -235,8 +265,15 @@ function FilesContent() {
                 ) : (
                     remoteFiles.length === 0 ? (
                         <div className="py-24 text-center flex flex-col items-center gap-6">
-                            <Globe size={48} className="text-accent animate-pulse opacity-20" />
-                            <p className="text-muted tech-text text-sm tracking-widest uppercase">SCANNING_IPFS_NETWORK_STREAMS...</p>
+                            <Globe size={48} className={`${isScanning ? 'animate-pulse' : ''} text-accent opacity-20`} />
+                            <p className="text-muted tech-text text-sm tracking-widest uppercase">
+                                {isScanning ? 'SCANNING_IPFS_NETWORK_STREAMS...' : 'NO_REMOTE_ASSETS_FOUND_ON_THIS_WALLET'}
+                            </p>
+                            {!isScanning && (
+                                <button onClick={scanRemote} className="text-accent underline tech-text text-xs uppercase tracking-widest">
+                                    RETRY_DEEP_SCAN
+                                </button>
+                            )}
                         </div>
                     ) : (
                         <div className="overflow-x-auto custom-scrollbar">
@@ -245,7 +282,7 @@ function FilesContent() {
                                     <tr className="border-b border-glass-border bg-white/[0.02]">
                                         <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">IPFS_CID_ADDRESS</th>
                                         <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">METADATA_NAME</th>
-                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-right">STATUS</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-right">STATUS_AND_ACTION</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -269,10 +306,18 @@ function FilesContent() {
                                                 {rf.metadata?.name || 'UNKNOWN_ASSET'}
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg glass border border-success/20 text-success text-[10px] font-black uppercase tech-text tracking-widest">
-                                                    <CheckCircle2 size={12} />
-                                                    PINNED
-                                                </span>
+                                                <div className="flex items-center justify-end gap-4">
+                                                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg glass border border-success/20 text-success text-[10px] font-black uppercase tech-text tracking-widest">
+                                                        <CheckCircle2 size={12} />
+                                                        PINNED
+                                                    </span>
+                                                    <button 
+                                                        onClick={() => handleImport(rf)}
+                                                        className="px-4 py-1.5 rounded-lg bg-accent text-accent-fg text-[10px] font-black uppercase tech-text tracking-widest hover:brightness-110 transition-all shadow-lg shadow-accent/20"
+                                                    >
+                                                        RESTORE_TO_VAULT
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

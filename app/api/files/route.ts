@@ -2,14 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
     const PINATA_JWT = process.env.PINATA_JWT;
+    const { searchParams } = new URL(req.url);
+    const wallet = searchParams.get('wallet');
     
     if (!PINATA_JWT) {
         return NextResponse.json({ error: 'Pinata JWT not configured' }, { status: 500 });
     }
 
     try {
-        console.log('Fetching files from Pinata...');
-        const response = await fetch('https://api.pinata.cloud/data/pinList?status=pinned', {
+        console.log(`Fetching files from Pinata for wallet: ${wallet || 'ALL'}...`);
+        let url = 'https://api.pinata.cloud/data/pinList?status=pinned&pageLimit=1000';
+        
+        if (wallet) {
+            url += `&metadata[keyvalues][wallet]=${wallet}`;
+        }
+
+        const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${PINATA_JWT}`,
