@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Shield, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { Shield, Lock, AlertCircle, RefreshCw } from 'lucide-react';
 import { WalletButton } from '@/components/WalletButton';
 import { createLoginMessage } from '@/lib/auth';
 import bs58 from 'bs58';
@@ -75,23 +75,30 @@ function LoginForm() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-5 bg-brand-dark">
+        <div className="min-h-screen flex items-center justify-center p-6 bg-background relative selection:bg-accent/30 overflow-hidden">
+            {/* Background Pattern */}
+            <div className="dot-grid" />
+            <div className="scanline" />
+            
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="glass-card max-w-[440px] w-full p-12 text-center flex flex-col gap-8 bg-brand-dark/50 border border-brand-muted/10 shadow-3xl"
+                className="glass-card max-w-[480px] w-full p-10 lg:p-14 text-center flex flex-col gap-10 border border-glass-border shadow-3xl hud-border z-10"
             >
                 <div>
-                    <div className="w-16 h-16 bg-brand-gold/10 rounded-[20px] flex items-center justify-center mx-auto mb-6 text-brand-gold">
-                        <Shield size={32} />
+                    <div className="w-20 h-20 glass clip-corners flex items-center justify-center mx-auto mb-8 text-accent hud-border group relative">
+                        <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Shield size={36} />
                     </div>
-                    <h1 className="text-3xl font-bold mb-3 text-brand-light">@Ryuarnovi&apos;s Vault</h1>
-                    <p className="text-brand-muted leading-relaxed">
-                        Authorized access only. Connect the master wallet to enter.
+                    <h1 className="text-3xl lg:text-4xl font-black mb-4 text-main tracking-tighter leading-none tech-text">
+                        VAULT_<span className="text-accent underline">AUTHORITY</span>
+                    </h1>
+                    <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60 leading-relaxed uppercase tracking-widest">
+                        RESTRICTED_ACCESS_PORTAL // END_MINISTRATOR_REQUIRED
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-4 items-center">
+                <div className="flex flex-col gap-6 items-center">
                     {!connected ? (
                         <div className="scale-110">
                             <WalletButton />
@@ -102,16 +109,16 @@ function LoginForm() {
                             animate={{ opacity: 1, y: 0 }}
                             disabled={status === 'signing' || status === 'verifying' || status === 'success'}
                             onClick={handleLogin}
-                            className="premium-button w-full h-14 flex items-center justify-center gap-3 text-lg"
+                            className="premium-button w-full h-14 flex items-center justify-center gap-3 text-xs tracking-[0.2em] font-black tech-text clip-corners-sm uppercase hover:scale-105 transition-transform"
                         >
                             {status === 'signing' || status === 'verifying' ? (
-                                <Loader2 className="animate-spin" />
+                                <RefreshCw className="animate-spin" />
                             ) : status === 'success' ? (
-                                'Authenticated'
+                                'AUTHENTICATED'
                             ) : (
                                 <>
-                                    <Lock size={20} />
-                                    Authorize Vault Access
+                                    <Lock size={16} />
+                                    INITIALIZE_AUTH
                                 </>
                             )}
                         </motion.button>
@@ -119,21 +126,29 @@ function LoginForm() {
                 </div>
 
                 {connected && status === 'idle' && (
-                    <p className="text-sm text-brand-muted/60">
-                        Connected as: <span className="text-brand-gold font-mono">{publicKey?.toBase58().slice(0, 4)}...{publicKey?.toBase58().slice(-4)}</span>
-                    </p>
+                    <div className="glass px-6 py-3 rounded-xl border border-glass-border">
+                        <p className="text-[10px] tech-text text-muted font-black tracking-widest uppercase">
+                            DETECTED_WALLET: <span className="text-accent">{publicKey?.toBase58().slice(0, 10)}...</span>
+                        </p>
+                    </div>
                 )}
 
                 {status === 'error' && (
                     <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-3 rounded-xl bg-error/10 border border-error/20 text-error text-sm flex items-center gap-2 justify-center"
+                        className="p-4 rounded-xl glass border border-error/20 text-error text-[10px] tech-text flex items-center gap-3 justify-center uppercase tracking-widest"
                     >
                         <AlertCircle size={16} />
                         {errorMessage}
                     </motion.div>
                 )}
+
+                <div className="h-px bg-glass-border w-1/3 mx-auto opacity-30" />
+                
+                <p className="text-[9px] tech-text text-muted opacity-40 font-bold uppercase tracking-[0.3em]">
+                    DESIGNED_BY_RYUARNOVI // VERSION_3.0_STABLE
+                </p>
             </motion.div>
         </div>
     );
@@ -141,7 +156,7 @@ function LoginForm() {
 
 export default function LoginPage() {
     return (
-        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-brand-dark text-brand-gold">Loading Auth...</div>}>
+        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-accent tech-text">LOADING_AUTH_STREAMS...</div>}>
             <LoginForm />
         </React.Suspense>
     );

@@ -10,19 +10,27 @@ import { FileActionMenu } from '@/components/FileActionMenu';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-const StatCard = ({ icon, label, value, subValue }: any) => (
-    <div className="glass-card p-6 flex-1 border border-brand-muted/10">
-        <div className="flex justify-between mb-5">
-            <div className="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center text-brand-gold">
+const StatCard = ({ icon, label, value, subValue, delay = 0 }: any) => (
+    <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay }}
+        className="glass-card p-8 flex-1 border border-glass-border hover-lift relative group"
+    >
+        <div className="absolute top-0 right-0 w-16 h-16 bg-accent/5 clip-corners-sm -z-10 transition-colors group-hover:bg-accent/10" />
+        <div className="flex justify-between items-start mb-6">
+            <div className="w-12 h-12 glass clip-corners-sm flex items-center justify-center text-accent hud-border">
                 {icon}
             </div>
-            <span className="text-[10px] text-brand-muted font-bold tracking-widest uppercase self-start">
+            <span className="text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">
                 {label}
             </span>
         </div>
-        <div className="text-3xl font-bold mb-1 text-brand-light">{value}</div>
-        <div className="text-sm text-brand-muted font-medium">{subValue}</div>
-    </div>
+        <div className="text-4xl font-black mb-2 text-main tracking-tighter">{value}</div>
+        <div className="text-xs text-muted font-bold tech-text opacity-60">
+            {subValue}
+        </div>
+    </motion.div>
 );
 
 function DashboardContent() {
@@ -40,9 +48,6 @@ function DashboardContent() {
     React.useEffect(() => {
         if (publicKey) {
             const inventory = getFileInventory(publicKey.toBase58());
-            
-            // Overview only shows recent files, not filtered by search q here for simplicity 
-            // but we can keep it if needed. Let's show top 5 latest.
             const sorted = [...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt);
             setFiles(sorted.slice(0, 5));
             
@@ -60,14 +65,14 @@ function DashboardContent() {
     const formatTime = (ts: number) => {
         const diff = Date.now() - ts;
         if (diff < 60000) return 'Just now';
-        if (diff < 3600000) return `${Math.floor(diff / 60000)} mins ago`;
-        if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
+        if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+        if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
         return new Date(ts).toLocaleDateString();
     };
 
     const handleDelete = (id: string) => {
         if (!publicKey) return;
-        if (confirm('Are you sure you want to remove this file from your vault view?')) {
+        if (confirm('Are you sure you want to remove this file?')) {
             const inventory = getFileInventory(publicKey.toBase58());
             const newInventory = inventory.filter(f => f.id !== id);
             localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
@@ -76,91 +81,112 @@ function DashboardContent() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
-            <header className="flex justify-between items-end mb-10">
-                <div>
-                    <h1 className="text-4xl font-bold mb-2 text-brand-light">Dashboard Overview</h1>
-                    <p className="text-brand-muted font-medium">Quick summary of your secure decentralized vault.</p>
-                </div>
+        <div className="w-full">
+            <header className="mb-12">
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                >
+                    <h1 className="text-4xl lg:text-6xl font-black mb-3 text-main tracking-tighter leading-none">
+                        DASHBOARD_<span className="text-accent">OVERVIEW</span>
+                    </h1>
+                    <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60">
+                        SYSTEM_STATUS: <span className="text-success underline">SECURE</span> // DECENTRALIZED_VAULT_ACTIVE
+                    </p>
+                </motion.div>
             </header>
 
-            <div className="flex gap-6 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                 <StatCard 
-                    icon={<HardDrive size={20} />} 
+                    icon={<HardDrive size={22} />} 
                     label="Storage Usage" 
                     value={stats.usage} 
-                    subValue="of Unlimited"
+                    subValue="OF_UNLIMITED_CAPACITY"
+                    delay={0.1}
                 />
                 <StatCard 
-                    icon={<ShieldCheck size={20} />} 
+                    icon={<ShieldCheck size={22} />} 
                     label="Security" 
                     value="Active" 
-                    subValue="E2E Encrypted"
+                    subValue="END_TO_END_ENCRYPTED"
+                    delay={0.2}
                 />
                 <StatCard 
-                    icon={<History size={20} />} 
+                    icon={<Files size={22} />} 
                     label="Total Assets" 
                     value={stats.count.toString()} 
-                    subValue="Files Stored"
+                    subValue="FILES_IN_INVENTORY"
+                    delay={0.3}
                 />
             </div>
 
             <section>
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-brand-light">Recent Activity</h2>
+                <div className="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 className="text-2xl font-black text-main tracking-tight">Recent Activity</h2>
+                        <div className="h-1 w-12 bg-accent mt-2" />
+                    </div>
                     <Link href="/dashboard/files">
-                        <button className="text-brand-gold text-sm font-bold hover:underline">View All Files</button>
+                        <button className="text-accent text-[10px] font-black tracking-widest tech-text hover:underline border border-accent/20 px-4 py-2 rounded-lg transition-colors hover:bg-accent/5">
+                            VIEW_ALL_FILES
+                        </button>
                     </Link>
                 </div>
                 
-                <div className="glass-card border border-brand-muted/10">
+                <div className="glass-card border border-glass-border overflow-hidden hud-border">
                     {files.length === 0 ? (
-                        <div className="py-20 text-center flex flex-col items-center gap-4">
-                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-brand-muted">
-                                <Files size={32} />
+                        <div className="py-24 text-center flex flex-col items-center gap-6">
+                            <div className="w-20 h-20 glass clip-corners flex items-center justify-center text-muted opacity-20">
+                                <Files size={40} />
                             </div>
-                            <p className="text-brand-muted">No recent activity detected.</p>
+                            <p className="text-muted tech-text text-sm tracking-widest uppercase">No data strings detected.</p>
                         </div>
                     ) : (
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b border-brand-muted/10">
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">FILE NAME</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">SIZE</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">TIME</th>
-                                    <th className="px-6 py-5"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {files.map((file, i) => (
-                                    <tr 
-                                        key={file.id} 
-                                        className={`group hover:bg-white/[0.03] transition-colors ${
-                                            i < files.length - 1 ? 'border-b border-brand-muted/10' : ''
-                                        }`}
-                                    >
-                                        <td className="px-6 py-5 font-semibold text-brand-light flex items-center gap-3">
-                                            <div className="p-2 bg-brand-gold/5 rounded-lg">
-                                                <Files size={18} className="text-brand-gold" />
-                                            </div>
-                                            {file.name}
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-brand-muted">
-                                            {(file.size / 1024).toFixed(1)} KB
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-brand-muted">{formatTime(file.uploadedAt)}</td>
-                                        <td className="px-6 py-5 text-right">
-                                            <FileActionMenu file={file} onDelete={handleDelete} onUpdate={() => {
-                                                if (publicKey) {
-                                                    const inventory = getFileInventory(publicKey.toBase58());
-                                                    setFiles([...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 5));
-                                                }
-                                            }} />
-                                        </td>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse min-w-[600px]">
+                                <thead>
+                                    <tr className="border-b border-glass-border bg-white/[0.02]">
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">FILE_NAME</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">SIZE</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-center">TIME_LOGG</th>
+                                        <th className="px-8 py-6"></th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {files.map((file, i) => (
+                                        <tr 
+                                            key={file.id} 
+                                            className={`group hover:bg-white/[0.03] transition-colors ${
+                                                i < files.length - 1 ? 'border-b border-glass-border' : ''
+                                            }`}
+                                        >
+                                            <td className="px-8 py-6 font-bold text-main">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-2.5 glass clip-corners-sm group-hover:bg-accent transition-colors">
+                                                        <Files size={16} className="text-muted group-hover:text-primary-fg transition-colors" />
+                                                    </div>
+                                                    <span className="truncate max-w-[200px]">{file.name}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6 text-sm text-muted font-mono tracking-tighter">
+                                                {(file.size / 1024).toFixed(1)} KB
+                                            </td>
+                                            <td className="px-8 py-6 text-xs text-muted tech-text text-center opacity-70">
+                                                [{formatTime(file.uploadedAt)}]
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <FileActionMenu file={file} onDelete={handleDelete} onUpdate={() => {
+                                                    if (publicKey) {
+                                                        const inventory = getFileInventory(publicKey.toBase58());
+                                                        setFiles([...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 5));
+                                                    }
+                                                }} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
             </section>

@@ -70,7 +70,7 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
         else if (pathname.includes('/settings')) setActiveTab('settings');
         else if (pathname.includes('/upload')) setActiveTab('upload');
         else if (pathname === '/dashboard') setActiveTab('overview');
-        setIsMobileMenuOpen(false); // Close on route change
+        setIsMobileMenuOpen(false);
     }, [pathname]);
 
     const handleNavigation = (tab: string, path: string) => {
@@ -82,40 +82,37 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
     if (!connected) return null;
 
     const SidebarContent = () => (
-        <div className="flex flex-col h-full gap-10 p-8">
+        <div className="flex flex-col h-full gap-8 p-6">
             <div>
-                <div className="flex items-center gap-3 px-3 mb-8">
-                    <div className="w-8 h-8 bg-gradient-to-br from-brand-gold to-brand-muted rounded-lg flex items-center justify-center">
-                        <Files size={20} className="text-brand-dark" />
+                <div className="flex items-center gap-3 px-3 mb-10">
+                    <div className="w-10 h-10 bg-primary flex items-center justify-center clip-corners-sm">
+                        <Files size={20} className="text-primary-fg" />
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-brand-light">Vault<span className="accent-gradient">3</span></span>
+                    <span className="text-2xl font-black tracking-tighter text-main tech-text">
+                        Vault<span className="text-accent">3</span>
+                    </span>
                 </div>
 
-                <nav className="space-y-1">
-                    <SidebarItem 
-                        icon={<LayoutDashboard size={20} />} 
-                        label="Overview" 
-                        active={activeTab === 'overview'} 
-                        onClick={() => handleNavigation('overview', '/dashboard')}
-                    />
-                    <SidebarItem 
-                        icon={<Files size={20} />} 
-                        label="All Files" 
-                        active={activeTab === 'inventory'} 
-                        onClick={() => handleNavigation('inventory', '/dashboard/files')}
-                    />
-                    <SidebarItem 
-                        icon={<Upload size={20} />} 
-                        label="Upload" 
-                        active={activeTab === 'upload'} 
-                        onClick={() => handleNavigation('upload', '/upload')}
-                    />
+                <nav className="space-y-2">
+                    {[
+                        { id: 'overview', label: 'Overview', icon: <LayoutDashboard size={18} />, path: '/dashboard' },
+                        { id: 'inventory', label: 'All Files', icon: <Files size={18} />, path: '/dashboard/files' },
+                        { id: 'upload', label: 'Upload', icon: <Upload size={18} />, path: '/upload' },
+                    ].map((item) => (
+                        <SidebarItem 
+                            key={item.id}
+                            icon={item.icon} 
+                            label={item.label} 
+                            active={activeTab === item.id} 
+                            onClick={() => handleNavigation(item.id, item.path)}
+                        />
+                    ))}
                 </nav>
             </div>
 
             <div className="mt-auto">
                 <SidebarItem 
-                    icon={<Settings size={20} />} 
+                    icon={<Settings size={18} />} 
                     label="Settings" 
                     active={activeTab === 'settings'} 
                     onClick={() => handleNavigation('settings', '/settings')}
@@ -125,9 +122,12 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
     );
 
     return (
-        <div className="flex h-screen w-screen overflow-hidden bg-brand-dark">
+        <div className="flex h-screen w-screen overflow-hidden bg-background relative selection:bg-accent/30">
+            {/* Dot Grid Pattern */}
+            <div className="dot-grid" />
+            
             {/* Desktop Sidebar */}
-            <aside className="hidden lg:flex w-72 bg-brand-dark/30 backdrop-blur-xl border-r border-brand-muted/10 flex-col">
+            <aside className="hidden lg:flex w-72 glass border-r border-glass-border flex-col z-20">
                 <SidebarContent />
             </aside>
 
@@ -140,16 +140,17 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] lg:hidden"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[90] lg:hidden"
                         />
                         <motion.aside 
                             initial={{ x: -300 }}
                             animate={{ x: 0 }}
                             exit={{ x: -300 }}
-                            className="fixed inset-y-0 left-0 w-72 bg-brand-dark border-r border-brand-muted/10 z-[100] lg:hidden"
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="fixed inset-y-0 left-0 w-72 bg-surface border-r border-glass-border z-[100] lg:hidden"
                         >
-                            <div className="absolute top-6 right-6 lg:hidden">
-                                <button onClick={() => setIsMobileMenuOpen(false)} className="text-brand-muted hover:text-brand-light">
+                            <div className="absolute top-6 right-6">
+                                <button onClick={() => setIsMobileMenuOpen(false)} className="text-muted hover:text-main">
                                     <X size={24} />
                                 </button>
                             </div>
@@ -160,21 +161,22 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
             </AnimatePresence>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col overflow-hidden relative">
+            <main className="flex-1 flex flex-col overflow-hidden relative z-10">
                 {/* Topbar */}
-                <header className="px-4 lg:px-10 py-5 flex items-center justify-between border-b border-brand-muted/10 bg-brand-dark/20 sticky top-0 z-50">
+                <header className="px-5 lg:px-10 py-5 flex items-center justify-between border-b border-glass-border glass sticky top-0 z-50">
                     <div className="flex items-center gap-4">
                         <button 
                             onClick={() => setIsMobileMenuOpen(true)}
-                            className="lg:hidden p-2 text-brand-muted hover:text-brand-light"
+                            className="lg:hidden w-10 h-10 flex items-center justify-center text-muted hover:text-main glass clip-corners-sm"
                         >
-                            <Menu size={24} />
+                            <Menu size={20} />
                         </button>
-                        <div className="glass-card hidden md:flex items-center gap-3 px-4 py-2.5 min-w-[320px]">
-                            <Search size={18} className="text-brand-muted" />
+                        
+                        <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border">
+                            <Search size={16} className="text-muted" />
                             <input 
                                 type="text" 
-                                placeholder="Search your vault..." 
+                                placeholder="ACCESS_VAULT_QUERY..." 
                                 defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('q') || ''}
                                 onChange={(e) => {
                                     const q = e.target.value;
@@ -183,29 +185,34 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                                     else params.delete('q');
                                     router.push(`${pathname}?${params.toString()}`);
                                 }}
-                                className="bg-transparent border-none text-brand-light outline-none w-full text-sm placeholder:text-brand-muted/50"
+                                className="bg-transparent border-none text-main outline-none w-full text-[13px] tech-text placeholder:text-muted/40"
                             />
                         </div>
-                        {/* Mobile logo when sidebar is hidden */}
+
+                        {/* Mobile logo */}
                         <div className="flex items-center gap-2 lg:hidden md:hidden">
-                            <span className="text-lg font-bold tracking-tight text-brand-light">Vault<span className="accent-gradient">3</span></span>
+                            <span className="text-lg font-black tech-text tracking-tighter">Vault<span className="text-accent">3</span></span>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 lg:gap-6">
-                        <button className="hidden sm:block text-brand-muted hover:text-brand-light transition-colors">
-                            <Bell size={20} />
+                    <div className="flex items-center gap-4 lg:gap-8">
+                        <button className="hidden sm:flex w-10 h-10 items-center justify-center text-muted hover:text-accent glass clip-corners-sm hover:scale-110 transition-transform">
+                            <Bell size={18} />
                         </button>
-                        <div className="hidden sm:block h-6 w-px bg-brand-muted/20" />
                         <WalletButton />
                     </div>
                 </header>
 
                 {/* Content Area */}
-                <div className="flex-1 overflow-y-auto p-4 lg:p-10 pb-20 lg:pb-10">
-                    {children}
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                    <div className="p-6 lg:p-12 max-w-[1600px] mx-auto pb-24">
+                        {children}
+                    </div>
                 </div>
             </main>
+
+            {/* Global Scanline Effect */}
+            <div className="scanline" />
         </div>
     );
 };

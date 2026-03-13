@@ -1,15 +1,14 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { VaultDashboard } from '@/components/VaultDashboard';
-import { Files, Search, Filter, Plus } from 'lucide-react';
+import { Files, Search, Filter, Plus, Copy, RefreshCw, Globe, Shield, CheckCircle2 } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getFileInventory } from '@/lib/vault';
 import { FileActionMenu } from '@/components/FileActionMenu';
 import { useSearchParams } from 'next/navigation';
 import { VaultFile, FILE_CATEGORIES } from '@/types/file';
-import { Copy, RefreshCw, Globe, Shield, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 function FilesContent() {
@@ -22,6 +21,7 @@ function FilesContent() {
     const [activeCategory, setActiveCategory] = React.useState<string>('All');
     const [viewMode, setViewMode] = React.useState<'local' | 'remote'>('local');
     const [isScanning, setIsScanning] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
 
     const loadLocalFiles = React.useCallback(() => {
         if (publicKey) {
@@ -45,15 +45,18 @@ function FilesContent() {
 
     const scanRemote = async () => {
         setIsScanning(true);
+        setError(null);
         try {
             const res = await fetch('/api/files');
+            if (!res.ok) throw new Error('API_COMMUNICATION_FAILURE');
             const data = await res.json();
             if (data.files) {
                 setRemoteFiles(data.files);
                 setViewMode('remote');
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Remote scan failed:', err);
+            setError(err.message);
         } finally {
             setIsScanning(false);
         }
@@ -61,7 +64,6 @@ function FilesContent() {
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
-        // Simple toast would be better but let's just do alert for now or silent
     };
 
     const handleDelete = (id: string) => {
@@ -75,83 +77,113 @@ function FilesContent() {
     };
 
     return (
-        <div className="max-w-7xl mx-auto">
-            <header className="flex justify-between items-center mb-10">
-                <div>
-                    <h1 className="text-3xl font-bold text-brand-light flex items-center gap-3">
-                        <Files size={28} className="text-brand-gold" />
-                        Files
+        <div className="w-full">
+            <header className="mb-12">
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                >
+                    <h1 className="text-4xl lg:text-6xl font-black mb-3 text-main tracking-tighter leading-none">
+                        VAULT_<span className="text-accent">INVENTORY</span>
                     </h1>
-                    <div className="flex gap-4 mt-2">
+                    <p className="text-muted font-bold tech-text text-[10px] lg:text-xs opacity-60">
+                        BROWSING_CORE_FILES // {files.length} ASSETS_DETECTED
+                    </p>
+                </motion.div>
+            </header>
+
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-8 mb-12">
+                <div className="flex flex-col gap-6 w-full xl:w-auto">
+                    {/* View Switcher */}
+                    <div className="flex glass p-1 rounded-xl clip-corners-sm hud-border self-start">
                         <button 
                             onClick={() => setViewMode('local')}
-                            className={`text-sm font-bold pb-2 transition-all ${viewMode === 'local' ? 'text-brand-gold border-b-2 border-brand-gold' : 'text-brand-muted hover:text-brand-light'}`}
+                            className={`px-8 py-2.5 rounded-lg text-[10px] font-black tracking-widest tech-text transition-all ${
+                                viewMode === 'local' 
+                                ? 'sidebar-active shadow-lg' 
+                                : 'text-muted hover:text-main'
+                            }`}
                         >
-                            PRIVATE VAULT
+                            PRIVATE_VAULT
                         </button>
                         <button 
-                            onClick={() => { if (remoteFiles.length === 0) scanRemote(); else setViewMode('remote'); }}
-                            className={`text-sm font-bold pb-2 transition-all ${viewMode === 'remote' ? 'text-brand-gold border-b-2 border-brand-gold' : 'text-brand-muted hover:text-brand-light'}`}
+                            onClick={() => setViewMode('remote')}
+                            className={`px-8 py-2.5 rounded-lg text-[10px] font-black tracking-widest tech-text transition-all ${
+                                viewMode === 'remote' 
+                                ? 'sidebar-active shadow-lg' 
+                                : 'text-muted hover:text-main'
+                            }`}
                         >
-                            IPFS NETWORK
+                            IPFS_NETWORK
                         </button>
                     </div>
+
+                    {/* Category Tabs */}
+                    {viewMode === 'local' && (
+                        <div className="flex flex-wrap gap-2">
+                            {['All', ...FILE_CATEGORIES].map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`px-5 py-2.5 rounded-lg text-[10px] font-black tracking-widest tech-text transition-all clip-corners-sm ${
+                                        activeCategory === cat 
+                                        ? 'bg-accent text-accent-fg shadow-lg' 
+                                        : 'glass text-muted hover:text-main'
+                                    }`}
+                                >
+                                    {cat.toUpperCase()}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
-                <div className="flex gap-4">
-                     <button 
+
+                <div className="flex gap-4 w-full sm:w-auto">
+                    <button 
                         onClick={scanRemote}
                         disabled={isScanning}
-                        className="glass-card px-4 py-2 text-sm flex items-center gap-2 text-brand-muted hover:text-brand-light transition-colors disabled:opacity-50"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-8 py-3.5 bg-accent text-accent-fg rounded-xl font-black text-[10px] tracking-widest tech-text hover:brightness-110 transition-all disabled:opacity-50 clip-corners-sm shadow-xl shadow-accent/20"
                     >
-                        <RefreshCw size={16} className={isScanning ? 'animate-spin' : ''} />
-                        Scan IPFS
+                        {isScanning ? <RefreshCw size={14} className="animate-spin" /> : <Shield size={14} />}
+                        {isScanning ? 'SCANNING...' : 'SCAN_IPFS'}
                     </button>
-                    <Link href="/upload">
-                        <button className="premium-button flex items-center gap-2">
-                            <Plus size={20} />
-                            Add
+                    <Link href="/upload" className="flex-1 sm:flex-none">
+                        <button className="w-full flex items-center justify-center gap-3 px-8 py-3.5 glass text-main rounded-xl font-black text-[10px] tracking-widest tech-text hover:bg-accent/5 transition-all clip-corners-sm border border-glass-border">
+                            <Plus size={14} />
+                            NEW_UPLOAD
                         </button>
                     </Link>
                 </div>
-            </header>
+            </div>
 
-            {viewMode === 'local' && (
-                <div className="flex flex-wrap gap-2 mb-8">
-                    {['All', ...FILE_CATEGORIES].map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setActiveCategory(cat)}
-                            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                                activeCategory === cat 
-                                ? 'bg-brand-gold text-brand-dark shadow-lg shadow-brand-gold/10' 
-                                : 'bg-white/5 text-brand-muted hover:bg-white/10 hover:text-brand-light'
-                            }`}
-                        >
-                            {cat}
-                        </button>
-                    ))}
+            {error && (
+                <div className="mb-8 p-5 glass border border-error/20 text-error text-[10px] tech-text rounded-xl flex items-center gap-3 animate-fade-in hud-border">
+                    <div className="w-2.5 h-2.5 bg-error rounded-full animate-pulse" />
+                    ERROR_REPORT: {error}
                 </div>
             )}
 
-            <div className="glass-card border border-brand-muted/10 overflow-hidden">
+            <div className="glass-card border border-glass-border overflow-hidden hud-border">
                 {viewMode === 'local' ? (
                     files.length === 0 ? (
-                        <div className="py-20 text-center flex flex-col items-center gap-4">
-                            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-brand-muted">
-                                <Shield size={32} />
+                        <div className="py-24 text-center flex flex-col items-center gap-6">
+                            <div className="w-20 h-20 glass clip-corners flex items-center justify-center text-muted opacity-20">
+                                <Shield size={40} />
                             </div>
-                            <p className="text-brand-muted px-4">No files found locally. Try <button onClick={scanRemote} className="text-brand-gold hover:underline">scanning IPFS</button> to find existing uploads.</p>
+                            <p className="text-muted tech-text text-sm tracking-widest uppercase px-6">
+                                NO_LOCAL_STRINGS_DETECTED. <button onClick={scanRemote} className="text-accent underline">INITIATE_REMOTE_SCAN</button>
+                            </p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto min-w-full">
-                            <table className="w-full text-left min-w-[800px]">
+                        <div className="overflow-x-auto custom-scrollbar">
+                            <table className="w-full text-left border-collapse min-w-[900px]">
                                 <thead>
-                                    <tr className="border-b border-brand-muted/10">
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-left">NAME</th>
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">CID</th>
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-center">SIZE</th>
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-center">CREATION DATE</th>
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-right">ACTION</th>
+                                    <tr className="border-b border-glass-border bg-white/[0.02]">
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">FILE_NAME</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">IPFS_CID_HASH</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-center">SIZE</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-center">CREATION_LOGG</th>
+                                        <th className="px-8 py-6"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -159,34 +191,39 @@ function FilesContent() {
                                         <tr 
                                             key={file.id} 
                                             className={`group hover:bg-white/[0.03] transition-colors ${
-                                                i < files.length - 1 ? 'border-b border-brand-muted/10' : ''
+                                                i < files.length - 1 ? 'border-b border-glass-border' : ''
                                             }`}
                                         >
-                                            <td className="px-6 py-5 font-semibold text-brand-light">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="truncate max-w-[200px] lg:max-w-[300px]">{file.name}</span>
-                                                    <button onClick={() => copyToClipboard(file.name)} className="text-brand-muted/40 hover:text-brand-gold">
-                                                        <Copy size={14} />
-                                                    </button>
+                                            <td className="px-8 py-6 font-bold text-main">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="p-2.5 glass clip-corners-sm group-hover:bg-accent transition-colors">
+                                                        <Files size={16} className="text-muted group-hover:text-primary-fg transition-colors" />
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="truncate max-w-[200px] lg:max-w-[300px]">{file.name}</span>
+                                                        <button onClick={() => copyToClipboard(file.name)} className="text-muted/30 hover:text-accent transition-colors">
+                                                            <Copy size={12} />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5">
+                                            <td className="px-8 py-6">
                                                 <div className="flex items-center gap-2">
-                                                    <code className="text-[11px] font-mono text-brand-gold bg-brand-gold/5 px-2 py-1 rounded">
-                                                        {file.cid.slice(0, 8)}...{file.cid.slice(-8)}
+                                                    <code className="text-[11px] font-mono text-accent glass px-3 py-1.5 rounded-lg border border-accent/10">
+                                                        {file.cid.slice(0, 12)}...{file.cid.slice(-12)}
                                                     </code>
-                                                    <button onClick={() => copyToClipboard(file.cid)} className="text-brand-muted/40 hover:text-brand-gold">
-                                                        <Copy size={14} />
+                                                    <button onClick={() => copyToClipboard(file.cid)} className="text-muted/30 hover:text-accent transition-colors">
+                                                        <Copy size={12} />
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5 text-sm text-brand-muted text-center">
+                                            <td className="px-8 py-6 text-sm text-muted font-mono tracking-tighter text-center">
                                                 {(file.size / 1024).toFixed(2)} KB
                                             </td>
-                                            <td className="px-6 py-5 text-sm text-brand-muted text-center">
-                                                {new Date(file.uploadedAt).toLocaleDateString()}
+                                            <td className="px-8 py-6 text-xs text-muted tech-text text-center opacity-70">
+                                                [{new Date(file.uploadedAt).toLocaleDateString()}]
                                             </td>
-                                            <td className="px-6 py-5 text-right">
+                                            <td className="px-8 py-6 text-right">
                                                 <FileActionMenu file={file} onDelete={handleDelete} onUpdate={loadLocalFiles} />
                                             </td>
                                         </tr>
@@ -197,38 +234,44 @@ function FilesContent() {
                     )
                 ) : (
                     remoteFiles.length === 0 ? (
-                        <div className="py-20 text-center flex flex-col items-center gap-4">
-                            <Globe size={48} className="text-brand-muted animate-pulse" />
-                            <p className="text-brand-muted">Scanning IPFS network...</p>
+                        <div className="py-24 text-center flex flex-col items-center gap-6">
+                            <Globe size={48} className="text-accent animate-pulse opacity-20" />
+                            <p className="text-muted tech-text text-sm tracking-widest uppercase">SCANNING_IPFS_NETWORK_STREAMS...</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto min-w-full">
-                            <table className="w-full text-left min-w-[600px]">
+                        <div className="overflow-x-auto custom-scrollbar">
+                            <table className="w-full text-left border-collapse min-w-[700px]">
                                 <thead>
-                                    <tr className="border-b border-brand-muted/10">
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">IPFS CID</th>
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">ORIGINAL NAME</th>
-                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-right">STATUS</th>
+                                    <tr className="border-b border-glass-border bg-white/[0.02]">
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">IPFS_CID_ADDRESS</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">METADATA_NAME</th>
+                                        <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-right">STATUS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {remoteFiles.map((rf, i) => (
-                                        <tr key={rf.ipfs_pin_hash} className="border-b border-brand-muted/5 group hover:bg-white/[0.02]">
-                                            <td className="px-6 py-5 font-mono text-xs text-brand-gold">
-                                                <div className="flex items-center gap-2">
-                                                    {rf.ipfs_pin_hash.slice(0, 20)}...
-                                                    <button onClick={() => copyToClipboard(rf.ipfs_pin_hash)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Copy size={14} />
+                                        <tr 
+                                            key={rf.ipfs_pin_hash} 
+                                            className={`group hover:bg-white/[0.03] transition-colors ${
+                                                i < remoteFiles.length - 1 ? 'border-b border-glass-border' : ''
+                                            }`}
+                                        >
+                                            <td className="px-8 py-6 font-mono text-[11px] text-accent">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-2 h-2 bg-success rounded-full opacity-50" />
+                                                    {rf.ipfs_pin_hash.slice(0, 24)}...
+                                                    <button onClick={() => copyToClipboard(rf.ipfs_pin_hash)} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted hover:text-accent">
+                                                        <Copy size={12} />
                                                     </button>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-5 text-sm text-brand-light">
-                                                {rf.metadata?.name || 'Untitled'}
+                                            <td className="px-8 py-6 text-sm text-main font-bold">
+                                                {rf.metadata?.name || 'UNKNOWN_ASSET'}
                                             </td>
-                                            <td className="px-6 py-5 text-right">
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase">
-                                                    <CheckCircle2 size={10} />
-                                                    Pinned
+                                            <td className="px-8 py-6 text-right">
+                                                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg glass border border-success/20 text-success text-[10px] font-black uppercase tech-text tracking-widest">
+                                                    <CheckCircle2 size={12} />
+                                                    PINNED
                                                 </span>
                                             </td>
                                         </tr>
@@ -246,7 +289,7 @@ function FilesContent() {
 export default function AllFilesPage() {
     return (
         <VaultDashboard>
-            <React.Suspense fallback={<div className="flex items-center justify-center p-20 text-brand-gold"><RefreshCw className="animate-spin mr-2" /> Initializing Vault...</div>}>
+            <React.Suspense fallback={<div className="flex items-center justify-center p-20 text-accent"><RefreshCw className="animate-spin mr-3" /> INITIALIZING_VAULT_CORE...</div>}>
                 <FilesContent />
             </React.Suspense>
         </VaultDashboard>
