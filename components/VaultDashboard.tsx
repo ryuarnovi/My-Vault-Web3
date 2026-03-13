@@ -33,12 +33,12 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
             active 
             ? 'bg-accent/20 text-accent font-bold' 
             : 'text-muted hover:bg-white/5 hover:text-main'
-        } [.dark-sidebar_&]:${active ? 'text-accent' : 'text-slate-300 hover:text-white'}`}
+        } [.dark-sidebar_&]:${active ? 'text-accent' : 'text-slate-100 hover:text-white'}`}
     >
-        <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity [.dark-sidebar_&]:text-slate-300'}>
+        <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity [.dark-sidebar_&]:text-slate-100'}>
             {icon}
         </span>
-        <span className="font-semibold text-sm tracking-tight [.dark-sidebar_&]:text-inherit">{label}</span>
+        <span className="font-semibold text-sm tracking-tight [.dark-sidebar_&]:text-slate-100 [.dark-sidebar_&.group:hover]:text-white transition-colors">{label}</span>
         {active && (
             <motion.div 
                 layoutId="sidebar-active"
@@ -147,10 +147,10 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                             animate={{ x: 0 }}
                             exit={{ x: -300 }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 w-72 glass bg-black/80 lg:hidden z-[100] shadow-2xl dark-sidebar border-r border-white/10"
+                            className="fixed inset-y-0 left-0 w-72 bg-[#0A0A0E]/95 backdrop-blur-2xl border-r border-white/10 z-[100] lg:hidden shadow-2xl dark-sidebar"
                         >
                             <div className="absolute top-8 right-6">
-                                <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 flex items-center justify-center glass clip-corners-sm text-accent hover:text-white transition-colors border-white/10">
+                                <button onClick={() => setIsMobileMenuOpen(false)} className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 backdrop-blur-md clip-corners-sm text-accent hover:text-white transition-colors">
                                     <X size={20} />
                                 </button>
                             </div>
