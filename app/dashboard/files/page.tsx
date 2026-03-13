@@ -114,33 +114,32 @@ function FilesContent() {
     const handleDelete = async (file: VaultFile) => {
         if (!publicKey) return;
         
-        console.log('🗑️ CLICK_DETECTED: handleDelete for', file.name);
-        // Using window.confirm explicitly to avoid confusion with local variables
-        const isConfirmed = window.confirm(`Permanently delete "${file.name}"?\n(This will hide it immediately and attempt to purge from IPFS.)`);
+        console.log('🗑️ REQUEST_DELETE:', file.id);
+        const isConfirmed = window.confirm(`Permanently purge "${file.name}" from IPFS storage?`);
         
         if (isConfirmed) {
-            console.log('✅ CONFIRMED: Proceeding with deletion');
+            // Instant local removal for UX
+            removeFileFromInventory(publicKey.toBase58(), file.id);
+            loadLocalFiles();
+            
+            // Execute remote purge
+            setDeletingCids(prev => new Set(prev).add(file.cid));
             try {
-                // 1. Instant Local Delete
-                removeFileFromInventory(publicKey.toBase58(), file.id);
-                loadLocalFiles();
-                console.log('✨ LOCAL_INVENTORY_UPDATED');
-
-                // 2. Background Remote Purge
-                fetch('/api/files/delete', {
+                const res = await fetch('/api/files/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cid: file.cid })
-                }).then(res => {
-                    console.log('📡 REMOTE_PURGE_RESPONSE:', res.status);
-                }).catch(e => console.error('❌ REMOTE_PURGE_FETCH_ERROR:', e));
-
-            } catch (err: any) {
-                console.error('🔥 DELETE_FATAL_ERROR:', err);
-                alert('FAILED_TO_REMOVE_LOCAL_ASSET');
+                });
+                console.log('📡 DELETE_RS:', res.status);
+            } catch (e) {
+                console.error('❌ SYNC_ERR:', e);
+            } finally {
+                setDeletingCids(prev => {
+                    const next = new Set(prev);
+                    next.delete(file.cid);
+                    return next;
+                });
             }
-        } else {
-            console.log('❌ CANCELLED: Deletion aborted by user');
         }
     };
 
