@@ -51,8 +51,12 @@ function FilesContent() {
         setError(null);
         try {
             const res = await fetch(`/api/files?wallet=${publicKey.toBase58()}`);
-            if (!res.ok) throw new Error('API_COMMUNICATION_FAILURE');
             const data = await res.json();
+            
+            if (!res.ok) {
+                throw new Error(data.error || 'API_COMMUNICATION_FAILURE');
+            }
+
             if (data.files) {
                 setRemoteFiles(data.files);
                 setViewMode('remote');

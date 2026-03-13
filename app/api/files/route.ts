@@ -10,17 +10,29 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        console.log(`Fetching files from Pinata for wallet: ${wallet || 'ALL'}...`);
-        let url = 'https://api.pinata.cloud/data/pinList?status=pinned&pageLimit=1000';
-        
+        const pinataUrl = new URL('https://api.pinata.cloud/data/pinList');
+        pinataUrl.searchParams.append('status', 'pinned');
+        pinataUrl.searchParams.append('pageLimit', '1000');
+
         if (wallet) {
-            url += `&metadata[keyvalues][wallet]=${wallet}`;
+            // Using official Pinata metadata query format (JSON stringified)
+            const metadataQuery = JSON.stringify({
+                keyvalues: {
+                    wallet: {
+                        value: wallet,
+                        op: 'eq'
+                    }
+                }
+            });
+            pinataUrl.searchParams.append('metadata', metadataQuery);
         }
 
-        const response = await fetch(url, {
+        console.log(`📡 CONNECTING_TO_PINATA: ${pinataUrl.toString()}`);
+
+        const response = await fetch(pinataUrl.toString(), {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${PINATA_JWT}`,
+                'Authorization': `Bearer ${PINATA_JWT.trim()}`,
                 'Content-Type': 'application/json'
             },
             cache: 'no-store'
@@ -28,16 +40,24 @@ export async function GET(req: NextRequest) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Pinata API error:', response.status, errorText);
-            throw new Error(`Pinata error (${response.status}): ${errorText || 'Failed to fetch'}`);
+            console.error('❌ PINATA_GATEWAY_ERROR:', response.status, errorText);
+            
+            // Handle specific status codes
+            if (response.status === 401) throw new Error('PINATA_AUTHENTICATION_FAILED: CHECK_JWT_SECRET');
+            if (response.status === 403) throw new Error('PINATA_FORBIDDEN: ACCESS_DENIED');
+            
+            throw new Error(`PINATA_REMOTE_EXCEPTION (${response.status})`);
         }
 
         const data = await response.json();
-        console.log(`Successfully fetched ${data.rows?.length || 0} files from Pinata.`);
+        console.log(`✅ SYNC_SUCCESSFUL: ${data.rows?.length || 0} ASSETS_RETRIEVED`);
         
         return NextResponse.json({ files: data.rows || [] });
     } catch (error: any) {
-        console.error('API Route Error:', error.message);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('⚠️ VAULT_SYNC_INTERNAL_ERROR:', error.message);
+        return NextResponse.json({ 
+            error: error.message,
+            code: 'API_COMMUNICATION_FAILURE' 
+        }, { status: 500 });
     }
 }
