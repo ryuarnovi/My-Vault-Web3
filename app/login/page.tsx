@@ -9,7 +9,7 @@ import { WalletButton } from '@/components/WalletButton';
 import { createLoginMessage } from '@/lib/auth';
 import bs58 from 'bs58';
 
-export default function LoginPage() {
+function LoginForm() {
     const { publicKey, signMessage, connected } = useWallet();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -136,5 +136,13 @@ export default function LoginPage() {
                 )}
             </motion.div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-brand-dark text-brand-gold">Loading Auth...</div>}>
+            <LoginForm />
+        </React.Suspense>
     );
 }
