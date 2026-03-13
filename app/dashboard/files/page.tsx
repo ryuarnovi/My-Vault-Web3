@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VaultDashboard } from '@/components/VaultDashboard';
-import { Files, Search, Filter, Plus, Copy, RefreshCw, Globe, Shield, CheckCircle2 } from 'lucide-react';
+import { Files, Search, Filter, Plus, Copy, RefreshCw, Globe, Shield, CheckCircle2, Trash2 } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getFileInventory, saveFileToInventory } from '@/lib/vault';
 import { FileActionMenu } from '@/components/FileActionMenu';
@@ -113,12 +113,12 @@ function FilesContent() {
     const handleDelete = async (file: VaultFile) => {
         if (!publicKey) return;
         
-        const confirmMsg = `Are you sure you want to permanently delete "${file.name}"?\n\nThis will remove it from your Private Vault AND the IPFS network.`;
+        const confirmMsg = `Are you sure you want to permanently delete "${file.name}"?\n\nThis will remove it from your Private Vault AND attempt to purge it from the IPFS network.`;
         
         if (confirm(confirmMsg)) {
             try {
-                // 1. Remove from Pinata (Remote)
-                setIsScanning(true); // Reuse scanning state for loading feedback
+                // 1. Remove from Pinata (Remote) - Fire and forget or handle gracefully
+                setIsScanning(true); 
                 const pinataRes = await fetch('/api/files/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -126,8 +126,7 @@ function FilesContent() {
                 });
 
                 if (!pinataRes.ok) {
-                    const error = await pinataRes.json();
-                    throw new Error(error.error || 'UNPIN_FAILED');
+                    console.error('Remote purge failed, but proceeding with local removal');
                 }
 
                 // 2. Remove from Local Inventory
@@ -136,13 +135,49 @@ function FilesContent() {
                 localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
                 
                 loadLocalFiles();
-                alert('ASSET_PURGED_SUCCESSFULLY');
+                
+                if (pinataRes.ok) {
+                    alert('ASSET_PURGED_SUCCESSFULLY');
+                } else {
+                    alert('LOCAL_ASSET_REMOVED: REMOTE_PURGE_FAILED_BUT_IPFS_DATA_MAY_STILL_BE_CACHED');
+                }
             } catch (err: any) {
-                console.error('Delete failed:', err);
-                alert(`PURGE_FAILED: ${err.message}`);
+                console.error('Delete process encountered an error:', err);
+                // Still try to delete locally even on fetch throw
+                const inventory = getFileInventory(publicKey.toBase58());
+                const newInventory = inventory.filter(f => f.id !== file.id);
+                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
+                loadLocalFiles();
+                alert('LOCAL_REMOVAL_COMPLETE: NETWORK_COMMUNICATION_ERROR_DURING_REMOTE_PURGE');
             } finally {
                 setIsScanning(false);
             }
+        }
+    };
+
+    const handleRemoteDelete = async (rf: any) => {
+        if (!publicKey) return;
+        if (!confirm(`Permanently purge "${rf.metadata?.name || rf.ipfs_pin_hash}" from Pinata?`)) return;
+
+        setIsScanning(true);
+        try {
+            const res = await fetch('/api/files/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cid: rf.ipfs_pin_hash })
+            });
+
+            if (res.ok) {
+                setRemoteFiles(prev => prev.filter(f => f.ipfs_pin_hash !== rf.ipfs_pin_hash));
+                alert('REMOTE_ASSET_PURGED_SUCCESSFULLY');
+            } else {
+                const data = await res.json();
+                throw new Error(data.error || 'UNPIN_FAILED');
+            }
+        } catch (err: any) {
+            alert(`REMOTE_PURGE_FAILED: ${err.message}`);
+        } finally {
+            setIsScanning(false);
         }
     };
 
@@ -369,7 +404,14 @@ function FilesContent() {
                                                         onClick={() => handleImport(rf)}
                                                         className="px-4 py-1.5 rounded-lg bg-accent text-accent-fg text-[10px] font-black uppercase tech-text tracking-widest hover:brightness-110 transition-all shadow-lg shadow-accent/20"
                                                     >
-                                                        RESTORE_TO_VAULT
+                                                        RESTORE
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => handleRemoteDelete(rf)}
+                                                        className="p-2 rounded-lg glass text-error hover:bg-error/10 transition-all border border-error/20"
+                                                        title="PURGE_FROM_REMOTE"
+                                                    >
+                                                        <Trash2 size={14} />
                                                     </button>
                                                 </div>
                                             </td>

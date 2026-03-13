@@ -74,19 +74,19 @@ function DashboardContent() {
         if (!publicKey) return;
         if (confirm(`Are you sure you want to permanently delete "${file.name}"?`)) {
             try {
-                // Remove from Pinata
-                await fetch('/api/files/delete', {
+                // 1. Attempt Remove from Pinata
+                const res = await fetch('/api/files/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cid: file.cid })
                 });
 
-                // Remove from Local
+                // 2. Remove from Local (Always do this)
                 const inventory = getFileInventory(publicKey.toBase58());
                 const newInventory = inventory.filter(f => f.id !== file.id);
                 localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
                 
-                // Update stats locally
+                // Update state
                 const sorted = [...newInventory].sort((a, b) => b.uploadedAt - a.uploadedAt);
                 setFiles(sorted.slice(0, 5));
                 
@@ -98,9 +98,18 @@ function DashboardContent() {
                     count: newInventory.length,
                     shared: 0
                 });
+
+                if (!res.ok) {
+                    alert('LOCAL_REMOVAL_SUCCESS: REMOTE_SYNC_FAILED_BUT_VAULT_IS_CLEAN');
+                }
             } catch (err) {
-                console.error('Delete failed:', err);
-                alert('FAILED_TO_PURGE_FROM_REMOTE');
+                console.error('Delete process failed:', err);
+                // Fallback local remove
+                const inventory = getFileInventory(publicKey.toBase58());
+                const newInventory = inventory.filter(f => f.id !== file.id);
+                localStorage.setItem(`vault3_file_inventory_${publicKey.toBase58()}`, JSON.stringify(newInventory));
+                setFiles(newInventory.slice(0, 5));
+                alert('LOCAL_REMOVAL_COMPLETE: NETWORK_ERROR_DURING_SYNC');
             }
         }
     };

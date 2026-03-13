@@ -25,6 +25,13 @@ export async function POST(req: NextRequest) {
 
         if (!response.ok) {
             const errorText = await response.text();
+            
+            // If it's already unpinned or not found, we consider it "deleted" for the user's purposes
+            if (response.status === 404 || response.status === 400) {
+                console.warn('⚠️ ASSET_NOT_FOUND_OR_ALREADY_UNPINNED:', cid);
+                return NextResponse.json({ success: true, warning: 'ASSET_NOT_FOUND_REMOTE' });
+            }
+
             console.error('❌ PINATA_UNPIN_ERROR:', response.status, errorText);
             throw new Error(`Pinata unpin failed (${response.status})`);
         }
