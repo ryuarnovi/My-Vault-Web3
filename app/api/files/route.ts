@@ -8,22 +8,28 @@ export async function GET(req: NextRequest) {
     }
 
     try {
+        console.log('Fetching files from Pinata...');
         const response = await fetch('https://api.pinata.cloud/data/pinList?status=pinned', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${PINATA_JWT}`
-            }
+                'Authorization': `Bearer ${PINATA_JWT}`,
+                'Content-Type': 'application/json'
+            },
+            cache: 'no-store'
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch from Pinata');
+            const errorText = await response.text();
+            console.error('Pinata API error:', response.status, errorText);
+            throw new Error(`Pinata error (${response.status}): ${errorText || 'Failed to fetch'}`);
         }
 
         const data = await response.json();
+        console.log(`Successfully fetched ${data.rows?.length || 0} files from Pinata.`);
         
-        // We only care about the rows
         return NextResponse.json({ files: data.rows || [] });
     } catch (error: any) {
+        console.error('API Route Error:', error.message);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

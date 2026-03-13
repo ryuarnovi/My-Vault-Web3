@@ -133,65 +133,67 @@ function FilesContent() {
                 </div>
             )}
 
-            <div className="glass-card border border-brand-muted/10">
+            <div className="glass-card border border-brand-muted/10 overflow-hidden">
                 {viewMode === 'local' ? (
                     files.length === 0 ? (
                         <div className="py-20 text-center flex flex-col items-center gap-4">
                             <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-brand-muted">
                                 <Shield size={32} />
                             </div>
-                            <p className="text-brand-muted">No files found locally. Try <button onClick={scanRemote} className="text-brand-gold hover:underline">scanning IPFS</button> to find existing uploads.</p>
+                            <p className="text-brand-muted px-4">No files found locally. Try <button onClick={scanRemote} className="text-brand-gold hover:underline">scanning IPFS</button> to find existing uploads.</p>
                         </div>
                     ) : (
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b border-brand-muted/10">
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-left">NAME</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">CID</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-center">SIZE</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-center">CREATION DATE</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-right">ACTION</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {files.map((file, i) => (
-                                    <tr 
-                                        key={file.id} 
-                                        className={`group hover:bg-white/[0.03] transition-colors ${
-                                            i < files.length - 1 ? 'border-b border-brand-muted/10' : ''
-                                        }`}
-                                    >
-                                        <td className="px-6 py-5 font-semibold text-brand-light">
-                                            <div className="flex items-center gap-2">
-                                                <span className="truncate max-w-[240px]">{file.name}</span>
-                                                <button onClick={() => copyToClipboard(file.name)} className="text-brand-muted/40 hover:text-brand-gold">
-                                                    <Copy size={14} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex items-center gap-2">
-                                                <code className="text-[11px] font-mono text-brand-gold bg-brand-gold/5 px-2 py-1 rounded">
-                                                    {file.cid.slice(0, 8)}...{file.cid.slice(-8)}
-                                                </code>
-                                                <button onClick={() => copyToClipboard(file.cid)} className="text-brand-muted/40 hover:text-brand-gold">
-                                                    <Copy size={14} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-brand-muted text-center">
-                                            {(file.size / 1024).toFixed(2)} KB
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-brand-muted text-center">
-                                            {new Date(file.uploadedAt).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-5 text-right">
-                                            <FileActionMenu file={file} onDelete={handleDelete} onUpdate={loadLocalFiles} />
-                                        </td>
+                        <div className="overflow-x-auto min-w-full">
+                            <table className="w-full text-left min-w-[800px]">
+                                <thead>
+                                    <tr className="border-b border-brand-muted/10">
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-left">NAME</th>
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">CID</th>
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-center">SIZE</th>
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-center">CREATION DATE</th>
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-right">ACTION</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {files.map((file, i) => (
+                                        <tr 
+                                            key={file.id} 
+                                            className={`group hover:bg-white/[0.03] transition-colors ${
+                                                i < files.length - 1 ? 'border-b border-brand-muted/10' : ''
+                                            }`}
+                                        >
+                                            <td className="px-6 py-5 font-semibold text-brand-light">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="truncate max-w-[200px] lg:max-w-[300px]">{file.name}</span>
+                                                    <button onClick={() => copyToClipboard(file.name)} className="text-brand-muted/40 hover:text-brand-gold">
+                                                        <Copy size={14} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-5">
+                                                <div className="flex items-center gap-2">
+                                                    <code className="text-[11px] font-mono text-brand-gold bg-brand-gold/5 px-2 py-1 rounded">
+                                                        {file.cid.slice(0, 8)}...{file.cid.slice(-8)}
+                                                    </code>
+                                                    <button onClick={() => copyToClipboard(file.cid)} className="text-brand-muted/40 hover:text-brand-gold">
+                                                        <Copy size={14} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-5 text-sm text-brand-muted text-center">
+                                                {(file.size / 1024).toFixed(2)} KB
+                                            </td>
+                                            <td className="px-6 py-5 text-sm text-brand-muted text-center">
+                                                {new Date(file.uploadedAt).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-6 py-5 text-right">
+                                                <FileActionMenu file={file} onDelete={handleDelete} onUpdate={loadLocalFiles} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )
                 ) : (
                     remoteFiles.length === 0 ? (
@@ -200,38 +202,40 @@ function FilesContent() {
                             <p className="text-brand-muted">Scanning IPFS network...</p>
                         </div>
                     ) : (
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b border-brand-muted/10">
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">IPFS CID</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">ORIGINAL NAME</th>
-                                    <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-right">STATUS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {remoteFiles.map((rf, i) => (
-                                    <tr key={rf.ipfs_pin_hash} className="border-b border-brand-muted/5 group hover:bg-white/[0.02]">
-                                        <td className="px-6 py-5 font-mono text-xs text-brand-gold">
-                                            <div className="flex items-center gap-2">
-                                                {rf.ipfs_pin_hash}
-                                                <button onClick={() => copyToClipboard(rf.ipfs_pin_hash)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Copy size={14} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-5 text-sm text-brand-light">
-                                            {rf.metadata?.name || 'Untitled'}
-                                        </td>
-                                        <td className="px-6 py-5 text-right">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase">
-                                                <CheckCircle2 size={10} />
-                                                Pinned
-                                            </span>
-                                        </td>
+                        <div className="overflow-x-auto min-w-full">
+                            <table className="w-full text-left min-w-[600px]">
+                                <thead>
+                                    <tr className="border-b border-brand-muted/10">
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">IPFS CID</th>
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase">ORIGINAL NAME</th>
+                                        <th className="px-6 py-5 text-[10px] text-brand-muted font-bold tracking-widest uppercase text-right">STATUS</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {remoteFiles.map((rf, i) => (
+                                        <tr key={rf.ipfs_pin_hash} className="border-b border-brand-muted/5 group hover:bg-white/[0.02]">
+                                            <td className="px-6 py-5 font-mono text-xs text-brand-gold">
+                                                <div className="flex items-center gap-2">
+                                                    {rf.ipfs_pin_hash.slice(0, 20)}...
+                                                    <button onClick={() => copyToClipboard(rf.ipfs_pin_hash)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <Copy size={14} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-5 text-sm text-brand-light">
+                                                {rf.metadata?.name || 'Untitled'}
+                                            </td>
+                                            <td className="px-6 py-5 text-right">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase">
+                                                    <CheckCircle2 size={10} />
+                                                    Pinned
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )
                 )}
             </div>
