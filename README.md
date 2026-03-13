@@ -2,8 +2,11 @@
 
 Vault3 is a decentralized, end-to-end encrypted personal file storage solution built on **Solana** and **IPFS (via Pinata)**.
 
-![Dashboard Preview](./public/images/image.png)
-![Upload Interface](./public/images/image2.png)
+<div align="center">
+  <img src="./public/images/image.png" alt="Dashboard Preview" width="800" />
+  <br />
+  <img src="./public/images/image2.png" alt="Upload Interface" width="800" />
+</div>
 
 ## Features
 
@@ -16,7 +19,7 @@ Vault3 is a decentralized, end-to-end encrypted personal file storage solution b
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 (App Router)
+- **Framework**: Next.js 16 (Turbopack)
 - **Blockchain**: Solana (@solana/web3.js)
 - **Storage**: IPFS (Pinata)
 - **Styling**: Tailwind CSS v4
