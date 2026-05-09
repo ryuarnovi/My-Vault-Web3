@@ -24,7 +24,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-main relative selection:bg-accent/30 overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-white text-slate-900 relative selection:bg-accent/30 overflow-x-hidden">
       {/* Dynamic Background Elements */}
       <div className="dot-grid" />
       <div className="scanline" />
@@ -248,16 +248,16 @@ export default function Home() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-40 px-6 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-accent/[0.03] -skew-y-3 pointer-events-none" />
+        <section className="py-40 px-6 text-center relative overflow-hidden bg-white">
+          <div className="absolute inset-0 bg-slate-50 -skew-y-3 pointer-events-none" />
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="max-w-4xl mx-auto relative z-10"
           >
-            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none text-main">Ready to <span className="text-accent">Secure</span> Your World?</h2>
-            <p className="text-lg text-muted tech-text mb-16 opacity-70 tracking-widest uppercase">Take control of your data today. No sign-ups. Just your wallet.</p>
+            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none text-slate-900">Ready to <span className="text-accent">Secure</span> Your World?</h2>
+            <p className="text-lg text-slate-500 tech-text mb-16 opacity-70 tracking-widest uppercase">Take control of your data today. No sign-ups. Just your wallet.</p>
             <Link href="/login">
               <button className="premium-button px-16 py-8 text-xs font-black tracking-[0.4em] tech-text uppercase clip-corners hover:scale-110 active:scale-95 transition-all">
                 ENGAGE_VAULT_SYSTEM
@@ -268,7 +268,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-    <footer className="bg-[#0A0A0E] pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-white/5">
+      <footer className="bg-[#0A0A0E] pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-white/5 mt-auto">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
