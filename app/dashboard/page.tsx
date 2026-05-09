@@ -48,7 +48,17 @@ function DashboardContent() {
     React.useEffect(() => {
         if (publicKey) {
             const inventory = getFileInventory(publicKey.toBase58());
-            const sorted = [...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt);
+            
+            // Apply filtering if query exists
+            let filtered = inventory;
+            if (query) {
+                filtered = inventory.filter((f: any) => 
+                    f.name.toLowerCase().includes(query) || 
+                    (f.category && f.category.toLowerCase().includes(query))
+                );
+            }
+
+            const sorted = [...filtered].sort((a, b) => b.uploadedAt - a.uploadedAt);
             setFiles(sorted.slice(0, 5));
             
             const totalSize = inventory.reduce((acc: number, f: any) => acc + f.size, 0);
@@ -60,7 +70,7 @@ function DashboardContent() {
                 shared: 0
             });
         }
-    }, [publicKey]);
+    }, [publicKey, query]);
 
     const formatTime = (ts: number) => {
         const diff = Date.now() - ts;
