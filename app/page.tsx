@@ -1,12 +1,13 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { WalletButton } from '@/components/WalletButton';
 import { Shield, Cloud, Lock, ArrowRight, Zap, Database, Eye, Key, Layers, Server } from 'lucide-react';
 import Link from 'next/link';
+import Head from 'next/head';
 
 export default function Home() {
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -17,7 +18,7 @@ export default function Home() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
