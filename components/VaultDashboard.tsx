@@ -236,7 +236,7 @@ export const VaultDashboard = ({
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="fixed inset-y-0 left-0 w-72 bg-white dark:bg-[#0A0A0E] border-r border-glass-border z-[100] lg:hidden shadow-2xl"
+                            className="fixed inset-y-0 left-0 w-72 bg-background border-r border-glass-border z-[100] lg:hidden shadow-2xl"
                         >
                             <div className="absolute top-8 right-6">
                                 <button
