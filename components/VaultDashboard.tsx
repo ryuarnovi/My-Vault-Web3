@@ -38,7 +38,7 @@ const SidebarItem = ({
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             active
                 ? 'bg-accent/20 text-accent font-bold'
-                : 'text-muted hover:bg-accent/10 hover:text-accent'
+                : 'text-main/70 hover:bg-accent/10 hover:text-accent'
         }`}
     >
         <span
@@ -51,7 +51,7 @@ const SidebarItem = ({
             {icon}
         </span>
 
-        <span className="font-semibold text-sm tracking-tight transition-colors">
+        <span className="font-semibold text-sm tracking-tight transition-colors text-inherit">
             {label}
         </span>
 
