@@ -268,20 +268,64 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-12 px-12 border-t border-glass-border glass relative z-20">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-3">
-            <span className="text-lg font-black tracking-tighter tech-text uppercase text-main">VAULT_<span className="text-accent">THREE</span></span>
+      <footer className="py-20 px-6 md:px-12 border-t border-glass-border glass relative z-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-1 md:col-span-2">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 glass clip-corners flex items-center justify-center text-accent hud-border">
+                  <Shield size={16} />
+                </div>
+                <span className="text-xl font-black tracking-tighter tech-text uppercase text-main">VAULT_<span className="text-accent">THREE</span></span>
+              </div>
+              <p className="text-sm text-muted font-medium max-w-sm leading-relaxed opacity-70 mb-8">
+                The next generation of decentralized storage. Built on Solana and IPFS for unmatched security, speed, and reliability.
+              </p>
+              <div className="flex gap-4">
+                {/* Social Placeholder Icons */}
+                <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
+                  <Zap size={18} />
+                </div>
+                <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
+                  <Database size={18} />
+                </div>
+                <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
+                  <Server size={18} />
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-8">Protocol</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">Documentation</a></li>
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">API_Reference</a></li>
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">Solana_Scan</a></li>
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">IPFS_Nodes</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-8">Ecosystem</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">Community</a></li>
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">Github_Repo</a></li>
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">Audit_Report</a></li>
+                <li><a href="#" className="text-xs text-muted font-bold tech-text hover:text-accent transition-colors">Changelog</a></li>
+              </ul>
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-[10px] font-black tech-text text-muted uppercase tracking-widest">
-            <a href="#" className="hover:text-accent transition-colors">Github</a>
-            <a href="#" className="hover:text-accent transition-colors">Documentation</a>
-            <a href="#" className="hover:text-accent transition-colors">Solana_Mainnet</a>
-            <a href="#" className="hover:text-accent transition-colors">IPFS_Network</a>
+
+          <div className="pt-8 border-t border-glass-border flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[9px] font-black tech-text text-muted/60 uppercase tracking-[0.2em]">
+              © 2024 Ryuarnovi // Decentralized Precision // All Rights Reserved
+            </p>
+            <div className="flex gap-8 text-[9px] font-black tech-text text-muted/40 uppercase tracking-[0.2em]">
+              <a href="#" className="hover:text-accent transition-colors">Privacy_Protocol</a>
+              <a href="#" className="hover:text-accent transition-colors">Terms_of_Service</a>
+              <a href="#" className="hover:text-accent transition-colors">System_Status</a>
+            </div>
           </div>
-          <p className="text-[9px] font-black tech-text text-muted/60 uppercase tracking-[0.2em]">
-            © 2024 Ryuarnovi // Decentralized Precision
-          </p>
         </div>
       </footer>
     </div>

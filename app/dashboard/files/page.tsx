@@ -46,7 +46,7 @@ function FilesContent() {
         loadLocalFiles();
         // Proactive sync: scan remote files on mount
         if (publicKey) scanRemote();
-    }, [publicKey]); // Only re-run if wallet changes
+    }, [publicKey, activeCategory, loadLocalFiles]); // Added activeCategory and loadLocalFiles
 
     const scanRemote = async () => {
         if (!publicKey) return;
