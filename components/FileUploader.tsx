@@ -130,7 +130,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             // 5. Save to Local Inventory
             const vaultFile = {
                 id: Math.random().toString(36).substr(2, 9),
-                name: customFileName,
+                name: customFileName.endsWith('.enc') ? customFileName : `${customFileName}.enc`,
                 cid: data.cid,
                 size: file.size,
                 type: file.type,
