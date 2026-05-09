@@ -142,7 +142,7 @@ export const VaultDashboard = ({
                         <Files size={20} className="text-white" />
                     </div>
 
-                    <span className="text-2xl font-black tracking-tighter text-main [.dark-sidebar_&]:text-white tech-text">
+                    <span className="text-2xl font-black tracking-tighter text-main tech-text">
                         Vault
                         <span className="text-accent">3</span>
                     </span>
@@ -249,7 +249,7 @@ export const VaultDashboard = ({
                                 </button>
                             </div>
 
-                            <div className="text-[#0F172A] dark:text-[#F1F5F9] h-full relative z-10">
+                            <div className="text-main h-full relative z-10">
                                 <SidebarContent />
                             </div>
                         </motion.aside>
