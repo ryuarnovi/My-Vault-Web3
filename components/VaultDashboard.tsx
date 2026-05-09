@@ -10,8 +10,10 @@ import {
     Search,
     Bell,
     Menu,
-    X
+    X,
+    Home
 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { WalletButton } from './WalletButton';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -132,8 +134,11 @@ export const VaultDashboard = ({
     const SidebarContent = () => (
         <div className="flex flex-col h-full gap-8 p-6">
             <div>
-                <div className="flex items-center gap-3 px-3 mb-10">
-                    <div className="w-10 h-10 bg-accent flex items-center justify-center clip-corners-sm">
+                <Link 
+                    href="/" 
+                    className="flex items-center gap-3 px-3 mb-10 group hover:opacity-80 transition-opacity cursor-pointer"
+                >
+                    <div className="w-10 h-10 bg-accent flex items-center justify-center clip-corners-sm group-hover:scale-110 transition-transform">
                         <Files size={20} className="text-white" />
                     </div>
 
@@ -141,7 +146,7 @@ export const VaultDashboard = ({
                         Vault
                         <span className="text-accent">3</span>
                     </span>
-                </div>
+                </Link>
 
                 <nav className="space-y-2">
                     {[
@@ -266,6 +271,12 @@ export const VaultDashboard = ({
                             <Menu size={20} />
                         </button>
 
+                        <Link href="/">
+                            <button className="w-10 h-10 flex items-center justify-center text-muted hover:text-accent glass clip-corners-sm hover:scale-110 transition-all duration-200" title="Back to Home">
+                                <Home size={18} />
+                            </button>
+                        </Link>
+
                         <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border group focus-within:border-accent/40 transition-colors">
                             <Search
                                 size={16}
@@ -303,14 +314,14 @@ export const VaultDashboard = ({
                         </div>
 
                         {/* Mobile Logo */}
-                        <div className="flex items-center gap-2 lg:hidden md:hidden">
+                        <Link href="/" className="flex items-center gap-2 lg:hidden md:hidden group hover:opacity-80 transition-opacity">
                             <span className="text-lg font-black tech-text tracking-tighter text-main">
                                 Vault
                                 <span className="text-accent">
                                     3
                                 </span>
                             </span>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Right */}
