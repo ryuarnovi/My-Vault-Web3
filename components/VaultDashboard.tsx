@@ -236,14 +236,14 @@ export const VaultDashboard = ({
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="fixed inset-y-0 left-0 w-72 bg-background/95 backdrop-blur-2xl border-r border-glass-border z-[100] lg:hidden shadow-2xl"
+                            className="fixed inset-y-0 left-0 w-72 bg-background border-r border-glass-border z-[100] lg:hidden shadow-2xl"
                         >
                             <div className="absolute top-8 right-6">
                                 <button
                                     onClick={() =>
                                         setIsMobileMenuOpen(false)
                                     }
-                                    className="w-10 h-10 flex items-center justify-center bg-background/5 border border-glass-border backdrop-blur-md clip-corners-sm text-accent hover:text-main transition-colors"
+                                    className="w-10 h-10 flex items-center justify-center bg-surface border border-glass-border clip-corners-sm text-accent hover:text-main transition-colors"
                                 >
                                     <X size={20} />
                                 </button>
