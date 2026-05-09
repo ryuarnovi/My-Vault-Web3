@@ -64,22 +64,15 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             setStatus('encrypting');
             setError('');
             
-            let thumbnailCid = '';
+            let thumbnailBase64 = '';
             
-            // 1. Upload Thumbnail if exists
+            // 1. Process Thumbnail as Base64 instead of uploading to Pinata
             if (thumbnailBlob) {
-                try {
-                    const thumbFormData = new FormData();
-                    thumbFormData.append('file', thumbnailBlob, 'thumb.jpg');
-                    thumbFormData.append('wallet', publicKey.toBase58());
-                    const thumbRes = await fetch('/api/upload', { method: 'POST', body: thumbFormData });
-                    if (thumbRes.ok) {
-                        const thumbData = await thumbRes.json();
-                        thumbnailCid = thumbData.cid;
-                    }
-                } catch (e) {
-                    console.error('Thumbnail upload failed:', e);
-                }
+                const reader = new FileReader();
+                thumbnailBase64 = await new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result as string);
+                    reader.readAsDataURL(thumbnailBlob);
+                });
             }
 
             // 2. Generate Key & Encrypt
@@ -101,8 +94,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             formData.append('metadata', JSON.stringify({
                 iv: b64Iv,
                 encryptionKey: b64Key,
-                category: category,
-                thumbnailCid: thumbnailCid
+                category: category
             }));
 
             // 3. Upload to API Bridge
@@ -151,7 +143,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                     encryptionKey: await exportKey(key),
                     txHash: txHash || undefined,
                     category: category,
-                    thumbnailCid: thumbnailCid
+                    thumbnail: thumbnailBase64
                 }
             };
             

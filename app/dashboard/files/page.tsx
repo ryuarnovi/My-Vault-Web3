@@ -291,7 +291,13 @@ function FilesContent() {
                                              <td className="px-8 py-6 font-bold text-main">
                                                  <div className="flex items-center gap-4">
                                                      <div className="w-10 h-10 glass clip-corners-sm flex items-center justify-center text-accent overflow-hidden shrink-0 group-hover:bg-accent transition-colors">
-                                                         {file.metadata?.thumbnailCid ? (
+                                                         {file.metadata?.thumbnail ? (
+                                                             <img 
+                                                                 src={file.metadata.thumbnail} 
+                                                                 alt="" 
+                                                                 className="w-full h-full object-cover"
+                                                             />
+                                                         ) : file.metadata?.thumbnailCid ? (
                                                              <img 
                                                                  src={`https://gateway.pinata.cloud/ipfs/${file.metadata.thumbnailCid}`} 
                                                                  alt="" 
