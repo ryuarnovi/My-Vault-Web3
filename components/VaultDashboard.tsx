@@ -55,6 +55,8 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState('inventory');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [notifications, setNotifications] = useState<any[]>([]);
 
     useEffect(() => {
         if (!connected) {
@@ -71,7 +73,17 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
         else if (pathname.includes('/upload')) setActiveTab('upload');
         else if (pathname === '/dashboard') setActiveTab('overview');
         setIsMobileMenuOpen(false);
+        setIsNotificationsOpen(false);
     }, [pathname]);
+
+    useEffect(() => {
+        if (connected && publicKey) {
+            const inventory = getFileInventory(publicKey.toBase58());
+            // Get latest 5 files as notifications
+            const latest = [...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 5);
+            setNotifications(latest);
+        }
+    }, [connected, publicKey, pathname]); // Re-fetch on pathname change to catch new uploads
 
     const handleNavigation = (tab: string, path: string) => {
         setActiveTab(tab);
@@ -198,9 +210,72 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                     </div>
 
                     <div className="flex items-center gap-4 lg:gap-8">
-                        <button className="hidden sm:flex w-10 h-10 items-center justify-center text-muted hover:text-accent glass clip-corners-sm hover:scale-110 transition-transform">
-                            <Bell size={18} />
-                        </button>
+                        <div className="relative">
+                            <button 
+                                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                                className={`w-10 h-10 flex items-center justify-center glass clip-corners-sm hover:scale-110 transition-transform ${isNotificationsOpen ? 'text-accent border-accent/40' : 'text-muted hover:text-accent'}`}
+                            >
+                                <Bell size={18} />
+                                {notifications.length > 0 && (
+                                    <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]" />
+                                )}
+                            </button>
+
+                            <AnimatePresence>
+                                {isNotificationsOpen && (
+                                    <>
+                                        <motion.div 
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            onClick={() => setIsNotificationsOpen(false)}
+                                            className="fixed inset-0 z-40"
+                                        />
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            className="absolute right-0 mt-4 w-80 glass-card border border-glass-border hud-border z-50 overflow-hidden shadow-2xl"
+                                        >
+                                            <div className="p-4 border-b border-glass-border bg-accent/5">
+                                                <h3 className="text-[10px] font-black tech-text text-accent tracking-[0.2em] uppercase">System_Notifications</h3>
+                                            </div>
+                                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                                {notifications.length === 0 ? (
+                                                    <div className="p-8 text-center">
+                                                        <p className="text-[10px] tech-text text-muted opacity-50">No recent activity detected.</p>
+                                                    </div>
+                                                ) : (
+                                                    <div className="divide-y divide-glass-border">
+                                                        {notifications.map((file) => (
+                                                            <div key={file.id} className="p-4 hover:bg-accent/5 transition-colors group cursor-pointer" onClick={() => router.push('/dashboard/files')}>
+                                                                <div className="flex gap-3">
+                                                                    <div className="w-8 h-8 glass clip-corners-sm flex items-center justify-center text-accent shrink-0 group-hover:bg-accent group-hover:text-white transition-colors">
+                                                                        <Files size={14} />
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <p className="text-[11px] font-bold text-main truncate uppercase tracking-tight">{file.name}</p>
+                                                                        <p className="text-[9px] tech-text text-muted mt-1 uppercase">New File Detected // {new Date(file.uploadedAt).toLocaleDateString()}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="p-3 border-t border-glass-border text-center bg-accent/5">
+                                                <button 
+                                                    onClick={() => router.push('/dashboard/files')}
+                                                    className="text-[9px] font-black tech-text text-muted hover:text-accent transition-colors tracking-widest uppercase"
+                                                >
+                                                    View_All_Inventory
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    </>
+                                )}
+                            </AnimatePresence>
+                        </div>
                         <WalletButton />
                     </div>
                 </header>
