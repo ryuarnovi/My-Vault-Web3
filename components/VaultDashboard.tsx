@@ -327,20 +327,16 @@ export const VaultDashboard = ({
                     </div>
                 </header>
 
-                                {notifications.length > 0 && (
-                                    <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]" />
-                                )}
-                            </button>
-
-                            {/* Notification Popup */}
-                            <AnimatePresence>
-                                {isNotificationsOpen && (
-                                   <motion.div
-    initial={{
-        opacity: 0,
-        y: 10,
-        scale: 0.95,
-    }}
+                <div className="flex-1 overflow-y-auto relative custom-scrollbar">
+                    {/* Notification Popup */}
+                    <AnimatePresence>
+                        {isNotificationsOpen && (
+                            <motion.div
+                                initial={{
+                                    opacity: 0,
+                                    y: 10,
+                                    scale: 0.95,
+                                }}
     animate={{
         opacity: 1,
         y: 0,
