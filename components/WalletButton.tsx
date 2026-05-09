@@ -51,12 +51,12 @@ export const WalletButton = () => {
             <motion.div 
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="glass-card px-4 py-2 flex items-center gap-3 rounded-xl border-brand-gold/20"
+                className="glass-card px-2.5 md:px-4 py-1.5 md:py-2 flex items-center gap-2 md:gap-3 rounded-xl border-brand-gold/20 shrink-0"
             >
                 <div 
-                    className="w-2 h-2 rounded-full bg-success shadow-[0_0_8px_var(--success)]"
+                    className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success shadow-[0_0_8px_var(--success)] shrink-0"
                 />
-                <span className="text-sm font-bold text-brand-light font-mono">
+                <span className="text-[10px] md:text-sm font-bold text-brand-light font-mono whitespace-nowrap">
                     {content}
                 </span>
             </motion.div>
@@ -65,9 +65,9 @@ export const WalletButton = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => disconnect()}
-                className="glass-card p-2 rounded-xl text-error hover:bg-error/10 border-error/20 transition-colors"
+                className="glass-card p-1.5 md:p-2 rounded-xl text-error hover:bg-error/10 border-error/20 transition-colors shrink-0"
             >
-                <LogOut size={18} />
+                <LogOut size={14} className="md:w-[18px] md:h-[18px]" />
             </motion.button>
         </div>
     );

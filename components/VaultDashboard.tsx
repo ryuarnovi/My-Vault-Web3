@@ -236,20 +236,20 @@ export const VaultDashboard = ({
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="fixed inset-y-0 left-0 w-72 bg-[#0A0A0E]/95 backdrop-blur-2xl border-r border-white/10 z-[100] lg:hidden shadow-2xl dark-sidebar"
+                            className="fixed inset-y-0 left-0 w-72 bg-background/95 backdrop-blur-2xl border-r border-glass-border z-[100] lg:hidden shadow-2xl"
                         >
                             <div className="absolute top-8 right-6">
                                 <button
                                     onClick={() =>
                                         setIsMobileMenuOpen(false)
                                     }
-                                    className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 backdrop-blur-md clip-corners-sm text-accent hover:text-white transition-colors"
+                                    className="w-10 h-10 flex items-center justify-center bg-background/5 border border-glass-border backdrop-blur-md clip-corners-sm text-accent hover:text-main transition-colors"
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="text-white h-full relative z-10">
+                            <div className="text-main h-full relative z-10">
                                 <SidebarContent />
                             </div>
                         </motion.aside>
