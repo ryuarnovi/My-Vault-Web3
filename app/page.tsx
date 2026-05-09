@@ -30,7 +30,7 @@ export default function Home() {
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
       
       {/* Navigation Header */}
-      <nav className="flex justify-between items-center px-6 md:px-12 py-5 fixed top-0 w-full z-[100] glass border-b border-glass-border">
+      <nav className="flex justify-between items-center px-6 md:px-12 py-4 fixed top-0 w-full z-[100] bg-white/70 backdrop-blur-xl border-b border-slate-200/50 transition-all duration-300">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
