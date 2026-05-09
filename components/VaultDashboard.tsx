@@ -142,7 +142,7 @@ export const VaultDashboard = ({
                         <Files size={20} className="text-white" />
                     </div>
 
-                    <span className="text-2xl font-black tracking-tighter text-main tech-text">
+                    <span className="text-2xl font-black tracking-tighter text-main [.mobile-sidebar_&]:text-white tech-text">
                         Vault
                         <span className="text-accent">3</span>
                     </span>
@@ -236,7 +236,7 @@ export const VaultDashboard = ({
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="fixed inset-y-0 left-0 w-72 bg-background border-r border-glass-border z-[100] lg:hidden shadow-2xl"
+                            className="fixed inset-y-0 left-0 w-72 bg-[#0A0A0E] border-r border-white/10 z-[100] lg:hidden shadow-2xl mobile-sidebar"
                         >
                             <div className="absolute top-8 right-6">
                                 <button
@@ -249,7 +249,7 @@ export const VaultDashboard = ({
                                 </button>
                             </div>
 
-                            <div className="text-main h-full relative z-10">
+                            <div className="text-white h-full relative z-10">
                                 <SidebarContent />
                             </div>
                         </motion.aside>
