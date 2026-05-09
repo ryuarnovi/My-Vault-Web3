@@ -51,7 +51,7 @@ export default function Home() {
           className="flex items-center gap-4 md:gap-8"
         >
           <Link href="/login" className="hidden sm:block">
-            <button className="text-[10px] font-black tech-text tracking-widest text-muted hover:text-accent transition-all uppercase px-4 py-2 hover:bg-accent/5 rounded-lg">
+            <button className="text-[10px] font-black tech-text tracking-widest text-slate-900 hover:text-white transition-all uppercase px-5 py-2.5 border border-slate-200 hover:bg-slate-900 rounded-full hover:shadow-lg active:scale-95">
               ACCESS_CORE
             </button>
           </Link>
