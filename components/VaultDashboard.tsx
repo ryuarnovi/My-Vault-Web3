@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    LayoutDashboard, 
-    Upload, 
-    Files, 
-    Settings, 
-    Search, 
+import {
+    LayoutDashboard,
+    Upload,
+    Files,
+    Settings,
+    Search,
     Bell,
     Menu,
     X
@@ -24,21 +24,36 @@ interface SidebarItemProps {
     onClick?: () => void;
 }
 
-const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
+const SidebarItem = ({
+    icon,
+    label,
+    active,
+    onClick,
+}: SidebarItemProps) => (
     <button
         onClick={onClick}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-            active 
-            ? 'bg-accent/20 text-accent font-bold' 
-            : 'text-muted hover:bg-accent/10 hover:text-accent'
+            active
+                ? 'bg-accent/20 text-accent font-bold'
+                : 'text-muted hover:bg-accent/10 hover:text-accent'
         }`}
     >
-        <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity'}>
+        <span
+            className={
+                active
+                    ? 'text-accent'
+                    : 'opacity-70 group-hover:opacity-100 transition-opacity'
+            }
+        >
             {icon}
         </span>
-        <span className="font-semibold text-sm tracking-tight transition-colors">{label}</span>
+
+        <span className="font-semibold text-sm tracking-tight transition-colors">
+            {label}
+        </span>
+
         {active && (
-            <motion.div 
+            <motion.div
                 layoutId="sidebar-active"
                 className="ml-auto w-1 h-4 bg-accent rounded-full shadow-[0_0_10px_rgba(var(--accent-rgb),0.5)]"
             />
@@ -46,38 +61,61 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
     </button>
 );
 
-export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
+export const VaultDashboard = ({
+    children,
+}: {
+    children: React.ReactNode;
+}) => {
     const ALLOWED_WALLET = process.env.NEXT_PUBLIC_ALLOWED_WALLET;
+
     const { connected, publicKey } = useWallet();
+
     const router = useRouter();
     const pathname = usePathname();
+
     const [activeTab, setActiveTab] = useState('inventory');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isNotificationsOpen, setIsNotificationsOpen] =
+        useState(false);
+
     const [notifications, setNotifications] = useState<any[]>([]);
 
     useEffect(() => {
         if (!connected) {
             router.push('/login');
-        } else if (publicKey && publicKey.toBase58() !== ALLOWED_WALLET) {
+        } else if (
+            publicKey &&
+            publicKey.toBase58() !== ALLOWED_WALLET
+        ) {
             console.error('Unauthorized wallet access attempt');
             router.push('/login?error=unauthorized');
         }
     }, [connected, publicKey, router]);
 
     useEffect(() => {
-        if (pathname === '/dashboard/files') setActiveTab('inventory');
-        else if (pathname.includes('/settings')) setActiveTab('settings');
-        else if (pathname.includes('/upload')) setActiveTab('upload');
-        else if (pathname === '/dashboard') setActiveTab('overview');
+        if (pathname === '/dashboard/files')
+            setActiveTab('inventory');
+        else if (pathname.includes('/settings'))
+            setActiveTab('settings');
+        else if (pathname.includes('/upload'))
+            setActiveTab('upload');
+        else if (pathname === '/dashboard')
+            setActiveTab('overview');
+
         setIsMobileMenuOpen(false);
         setIsNotificationsOpen(false);
     }, [pathname]);
 
     useEffect(() => {
         if (connected && publicKey) {
-            const inventory = getFileInventory(publicKey.toBase58());
-            const latest = [...inventory].sort((a, b) => b.uploadedAt - a.uploadedAt).slice(0, 5);
+            const inventory = getFileInventory(
+                publicKey.toBase58()
+            );
+
+            const latest = [...inventory]
+                .sort((a, b) => b.uploadedAt - a.uploadedAt)
+                .slice(0, 5);
+
             setNotifications(latest);
         }
     }, [connected, publicKey, pathname]);
@@ -97,34 +135,63 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                     <div className="w-10 h-10 bg-accent flex items-center justify-center clip-corners-sm">
                         <Files size={20} className="text-white" />
                     </div>
+
                     <span className="text-2xl font-black tracking-tighter text-main [.dark-sidebar_&]:text-white tech-text">
-                        Vault<span className="text-accent">3</span>
+                        Vault
+                        <span className="text-accent">3</span>
                     </span>
                 </div>
 
                 <nav className="space-y-2">
                     {[
-                        { id: 'overview', label: 'Overview', icon: <LayoutDashboard size={18} />, path: '/dashboard' },
-                        { id: 'inventory', label: 'All Files', icon: <Files size={18} />, path: '/dashboard/files' },
-                        { id: 'upload', label: 'Upload', icon: <Upload size={18} />, path: '/upload' },
+                        {
+                            id: 'overview',
+                            label: 'Overview',
+                            icon: (
+                                <LayoutDashboard size={18} />
+                            ),
+                            path: '/dashboard',
+                        },
+                        {
+                            id: 'inventory',
+                            label: 'All Files',
+                            icon: <Files size={18} />,
+                            path: '/dashboard/files',
+                        },
+                        {
+                            id: 'upload',
+                            label: 'Upload',
+                            icon: <Upload size={18} />,
+                            path: '/upload',
+                        },
                     ].map((item) => (
-                        <SidebarItem 
+                        <SidebarItem
                             key={item.id}
-                            icon={item.icon} 
-                            label={item.label} 
-                            active={activeTab === item.id} 
-                            onClick={() => handleNavigation(item.id, item.path)}
+                            icon={item.icon}
+                            label={item.label}
+                            active={activeTab === item.id}
+                            onClick={() =>
+                                handleNavigation(
+                                    item.id,
+                                    item.path
+                                )
+                            }
                         />
                     ))}
                 </nav>
             </div>
 
             <div className="mt-auto">
-                <SidebarItem 
-                    icon={<Settings size={18} />} 
-                    label="Settings" 
-                    active={activeTab === 'settings'} 
-                    onClick={() => handleNavigation('settings', '/settings')}
+                <SidebarItem
+                    icon={<Settings size={18} />}
+                    label="Settings"
+                    active={activeTab === 'settings'}
+                    onClick={() =>
+                        handleNavigation(
+                            'settings',
+                            '/settings'
+                        )
+                    }
                 />
             </div>
         </div>
@@ -132,7 +199,7 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <div className="flex h-screen w-screen overflow-hidden bg-background relative selection:bg-accent/30">
-            {/* Dot Grid Pattern */}
+            {/* Dot Grid */}
             <div className="dot-grid" />
 
             {/* Desktop Sidebar */}
@@ -140,32 +207,42 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                 <SidebarContent />
             </aside>
 
-            {/* Mobile Sidebar Overlay */}
+            {/* Mobile Sidebar */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <>
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            onClick={() =>
+                                setIsMobileMenuOpen(false)
+                            }
                             className="fixed inset-0 bg-black/80 backdrop-blur-md z-[90] lg:hidden"
                         />
-                        <motion.aside 
+
+                        <motion.aside
                             initial={{ x: -300 }}
                             animate={{ x: 0 }}
                             exit={{ x: -300 }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            transition={{
+                                type: 'spring',
+                                damping: 25,
+                                stiffness: 200,
+                            }}
                             className="fixed inset-y-0 left-0 w-72 bg-[#0A0A0E]/95 backdrop-blur-2xl border-r border-white/10 z-[100] lg:hidden shadow-2xl dark-sidebar"
                         >
                             <div className="absolute top-8 right-6">
-                                <button 
-                                    onClick={() => setIsMobileMenuOpen(false)} 
+                                <button
+                                    onClick={() =>
+                                        setIsMobileMenuOpen(false)
+                                    }
                                     className="w-10 h-10 flex items-center justify-center bg-white/5 border border-white/10 backdrop-blur-md clip-corners-sm text-accent hover:text-white transition-colors"
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
+
                             <div className="text-white h-full relative z-10">
                                 <SidebarContent />
                             </div>
@@ -174,179 +251,278 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                 )}
             </AnimatePresence>
 
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col overflow-hidden relative z-10">
+            {/* Main */}
+            <main className="flex-1 flex flex-col overflow-hidden relative z-0">
                 {/* Topbar */}
                 <header className="px-5 lg:px-10 py-5 flex items-center justify-between border-b border-glass-border glass sticky top-0 z-50">
                     <div className="flex items-center gap-4">
-                        <button 
-                            onClick={() => setIsMobileMenuOpen(true)}
+                        <button
+                            onClick={() =>
+                                setIsMobileMenuOpen(true)
+                            }
                             className="lg:hidden w-10 h-10 flex items-center justify-center text-muted hover:text-main glass clip-corners-sm"
                         >
                             <Menu size={20} />
                         </button>
-                        
+
                         <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border group focus-within:border-accent/40 transition-colors">
-                            <Search size={16} className="text-muted group-focus-within:text-accent transition-colors" />
-                            <input 
-                                type="text" 
-                                placeholder="ACCESS_VAULT_QUERY..." 
-                                defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('q') || ''}
+                            <Search
+                                size={16}
+                                className="text-muted group-focus-within:text-accent transition-colors"
+                            />
+
+                            <input
+                                type="text"
+                                placeholder="ACCESS_VAULT_QUERY..."
+                                defaultValue={
+                                    new URLSearchParams(
+                                        typeof window !==
+                                        'undefined'
+                                            ? window.location.search
+                                            : ''
+                                    ).get('q') || ''
+                                }
                                 onChange={(e) => {
                                     const q = e.target.value;
-                                    const params = new URLSearchParams(window.location.search);
+
+                                    const params =
+                                        new URLSearchParams(
+                                            window.location.search
+                                        );
+
                                     if (q) params.set('q', q);
                                     else params.delete('q');
-                                    router.push(`${pathname}?${params.toString()}`);
+
+                                    router.push(
+                                        `${pathname}?${params.toString()}`
+                                    );
                                 }}
-                                className="bg-transparent border-none text-main outline-none w-full text-[11px] font-black tech-text placeholder:text-muted/30 uppercase tracking-[0.15em] selection:bg-accent/30"
+                                className="bg-transparent border-none text-main outline-none w-full text-[11px] font-black tech-text placeholder:text-muted/30 uppercase tracking-[0.15em]"
                             />
                         </div>
 
-                        {/* Mobile logo */}
+                        {/* Mobile Logo */}
                         <div className="flex items-center gap-2 lg:hidden md:hidden">
-                            <span className="text-lg font-black tech-text tracking-tighter text-main">Vault<span className="text-accent">3</span></span>
+                            <span className="text-lg font-black tech-text tracking-tighter text-main">
+                                Vault
+                                <span className="text-accent">
+                                    3
+                                </span>
+                            </span>
                         </div>
                     </div>
 
+                    {/* Right */}
                     <div className="flex items-center gap-4 lg:gap-8">
+                        {/* Notification */}
                         <div className="relative">
-                            <button 
-                                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                                className={`w-10 h-10 flex items-center justify-center glass clip-corners-sm hover:scale-110 transition-transform ${isNotificationsOpen ? 'text-accent border-accent/40' : 'text-muted hover:text-accent'}`}
+                            <button
+                                onClick={() =>
+                                    setIsNotificationsOpen(
+                                        !isNotificationsOpen
+                                    )
+                                }
+                                className={`relative w-10 h-10 flex items-center justify-center glass clip-corners-sm hover:scale-110 transition-all duration-200 ${
+                                    isNotificationsOpen
+                                        ? 'text-accent border border-accent/40 bg-accent/10'
+                                        : 'text-muted hover:text-accent'
+                                }`}
                             >
                                 <Bell size={18} />
+
                                 {notifications.length > 0 && (
                                     <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]" />
                                 )}
                             </button>
 
-                            {/* ─── NOTIFICATION POPUP ─── */}
+                            {/* Notification Popup */}
                             <AnimatePresence>
                                 {isNotificationsOpen && (
-                                    <>
-                                        {/* Backdrop */}
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            onClick={() => setIsNotificationsOpen(false)}
-                                            className="fixed inset-0 z-[90]"
-                                        />
+                                    <motion.div
+                                        initial={{
+                                            opacity: 0,
+                                            y: 10,
+                                            scale: 0.95,
+                                        }}
+                                        animate={{
+                                            opacity: 1,
+                                            y: 0,
+                                            scale: 1,
+                                        }}
+                                        exit={{
+                                            opacity: 0,
+                                            y: 10,
+                                            scale: 0.95,
+                                        }}
+                                        transition={{
+                                            duration: 0.2,
+                                        }}
+                                        className="absolute top-[52px] right-0 w-[360px] max-h-[500px] overflow-hidden rounded-2xl bg-[#0A0A0E]/95 backdrop-blur-2xl border border-white/10 shadow-2xl z-[120]"
+                                    >
+                                        {/* Header */}
+                                        <div className="px-5 py-4 border-b border-white/10 bg-accent/10">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">
+                                                        Notifications
+                                                    </h3>
 
-                                        {/* Popup */}
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="absolute top-[52px] right-0 w-[360px] max-h-[500px] overflow-hidden rounded-2xl 
-                                            bg-[#0A0A0E]/95 backdrop-blur-2xl border border-white/10 shadow-2xl z-[120]"
-                                        >
-                                            {/* Header */}
-                                            <div className="px-5 py-4 border-b border-white/10 bg-accent/10">
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">
-                                                            Notifications
-                                                        </h3>
-                                                        <p className="text-[10px] text-white/70 mt-1">
-                                                            {notifications.length} recent activity
-                                                        </p>
-                                                    </div>
-
-                                                    <button
-                                                        onClick={() => setIsNotificationsOpen(false)}
-                                                        className="w-8 h-8 rounded-lg flex items-center justify-center 
-                                                        bg-white/5 hover:bg-white/10 transition"
-                                                    >
-                                                        <X size={14} className="text-white" />
-                                                    </button>
+                                                    <p className="text-[10px] text-white/70 mt-1">
+                                                        {
+                                                            notifications.length
+                                                        }{' '}
+                                                        recent
+                                                        activity
+                                                    </p>
                                                 </div>
-                                            </div>
 
-                                            {/* Body */}
-                                            <div className="overflow-y-auto max-h-[380px] custom-scrollbar">
-                                                {notifications.length === 0 ? (
-                                                    <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-                                                        <Bell size={28} className="text-white/30 mb-3" />
-                                                        <p className="text-sm text-white/70">
-                                                            No notifications yet
-                                                        </p>
-                                                    </div>
-                                                ) : (
-                                                    <div className="divide-y divide-white/5">
-                                                        {notifications.map((file, idx) => (
+                                                <button
+                                                    onClick={() =>
+                                                        setIsNotificationsOpen(
+                                                            false
+                                                        )
+                                                    }
+                                                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 hover:bg-white/10 transition"
+                                                >
+                                                    <X
+                                                        size={14}
+                                                        className="text-white"
+                                                    />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Body */}
+                                        <div className="overflow-y-auto max-h-[380px] custom-scrollbar">
+                                            {notifications.length ===
+                                            0 ? (
+                                                <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
+                                                    <Bell
+                                                        size={28}
+                                                        className="text-white/30 mb-3"
+                                                    />
+
+                                                    <p className="text-sm text-white/70">
+                                                        No
+                                                        notifications
+                                                        yet
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <div className="divide-y divide-white/5">
+                                                    {notifications.map(
+                                                        (
+                                                            file,
+                                                            idx
+                                                        ) => (
                                                             <motion.div
-                                                                key={file.id}
-                                                                initial={{ opacity: 0, y: 10 }}
-                                                                animate={{ opacity: 1, y: 0 }}
-                                                                transition={{ delay: idx * 0.04 }}
+                                                                key={
+                                                                    file.id
+                                                                }
+                                                                initial={{
+                                                                    opacity: 0,
+                                                                    y: 10,
+                                                                }}
+                                                                animate={{
+                                                                    opacity: 1,
+                                                                    y: 0,
+                                                                }}
+                                                                transition={{
+                                                                    delay:
+                                                                        idx *
+                                                                        0.04,
+                                                                }}
                                                                 onClick={() => {
-                                                                    setIsNotificationsOpen(false);
-                                                                    router.push('/dashboard/files');
+                                                                    setIsNotificationsOpen(
+                                                                        false
+                                                                    );
+
+                                                                    router.push(
+                                                                        '/dashboard/files'
+                                                                    );
                                                                 }}
                                                                 className="p-4 hover:bg-white/5 transition cursor-pointer group"
                                                             >
                                                                 <div className="flex gap-3">
-                                                                    <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/30 
-                                                                    flex items-center justify-center shrink-0">
-                                                                        <Files size={16} className="text-white" />
+                                                                    <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center shrink-0">
+                                                                        <Files
+                                                                            size={
+                                                                                16
+                                                                            }
+                                                                            className="text-white"
+                                                                        />
                                                                     </div>
 
                                                                     <div className="flex-1 min-w-0">
                                                                         <p className="text-sm font-semibold text-white truncate">
-                                                                            {file.name}
+                                                                            {
+                                                                                file.name
+                                                                            }
                                                                         </p>
 
                                                                         <div className="flex items-center gap-2 mt-2 flex-wrap">
-                                                                            <span className="px-2 py-1 rounded-md text-[10px] 
-                                                                            bg-accent/20 border border-accent/30 text-white">
-                                                                                NEW FILE
+                                                                            <span className="px-2 py-1 rounded-md text-[10px] bg-accent/20 border border-accent/30 text-white">
+                                                                                NEW
+                                                                                FILE
                                                                             </span>
 
                                                                             <span className="text-[11px] text-white/60">
-                                                                                {new Date(file.uploadedAt).toLocaleDateString()} •{" "}
-                                                                                {new Date(file.uploadedAt).toLocaleTimeString([], {
-                                                                                    hour: '2-digit',
-                                                                                    minute: '2-digit',
-                                                                                })}
+                                                                                {new Date(
+                                                                                    file.uploadedAt
+                                                                                ).toLocaleDateString()}{' '}
+                                                                                •{' '}
+                                                                                {new Date(
+                                                                                    file.uploadedAt
+                                                                                ).toLocaleTimeString(
+                                                                                    [],
+                                                                                    {
+                                                                                        hour: '2-digit',
+                                                                                        minute:
+                                                                                            '2-digit',
+                                                                                    }
+                                                                                )}
                                                                             </span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </motion.div>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            {/* Footer */}
-                                            {notifications.length > 0 && (
-                                                <div className="p-3 border-t border-white/10 bg-white/[0.02]">
-                                                    <button
-                                                        onClick={() => {
-                                                            setIsNotificationsOpen(false);
-                                                            router.push('/dashboard/files');
-                                                        }}
-                                                        className="w-full py-3 rounded-xl bg-accent/15 border border-accent/20 
-                                                        text-sm font-semibold text-white hover:bg-accent/25 transition"
-                                                    >
-                                                        View All Files
-                                                    </button>
+                                                        )
+                                                    )}
                                                 </div>
                                             )}
-                                        </motion.div>
-                                    </>
+                                        </div>
+
+                                        {/* Footer */}
+                                        {notifications.length >
+                                            0 && (
+                                            <div className="p-3 border-t border-white/10 bg-white/[0.02]">
+                                                <button
+                                                    onClick={() => {
+                                                        setIsNotificationsOpen(
+                                                            false
+                                                        );
+
+                                                        router.push(
+                                                            '/dashboard/files'
+                                                        );
+                                                    }}
+                                                    className="w-full py-3 rounded-xl bg-accent/15 border border-accent/20 text-sm font-semibold text-white hover:bg-accent/25 transition"
+                                                >
+                                                    View All
+                                                    Files
+                                                </button>
+                                            </div>
+                                        )}
+                                    </motion.div>
                                 )}
                             </AnimatePresence>
-                            {/* ─── END NOTIFICATION POPUP ─── */}
                         </div>
+
                         <WalletButton />
                     </div>
                 </header>
 
-                {/* Content Area */}
+                {/* Content */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                     <div className="p-6 lg:p-12 max-w-[1600px] mx-auto pb-24">
                         {children}
@@ -354,7 +530,7 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                 </div>
             </main>
 
-            {/* Global Scanline Effect */}
+            {/* Scanline */}
             <div className="scanline" />
         </div>
     );
