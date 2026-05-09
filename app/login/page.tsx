@@ -83,16 +83,23 @@ function LoginForm() {
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="glass-card max-w-[480px] w-full p-10 lg:p-14 text-center flex flex-col gap-10 border border-glass-border shadow-3xl hud-border z-10"
+                className="glass-card max-w-[480px] w-full p-10 lg:p-14 text-center flex flex-col gap-10 border border-glass-border shadow-3xl hud-border z-10 relative"
             >
+                <button 
+                    onClick={() => router.push('/')}
+                    className="absolute top-6 left-6 text-[9px] tech-text text-muted hover:text-accent transition-colors flex items-center gap-2 uppercase tracking-widest font-black"
+                >
+                    <span className="w-6 h-6 glass rounded-full flex items-center justify-center border border-glass-border">←</span>
+                    BACK_TO_HOME
+                </button>
                 <div>
                     <div className="w-20 h-20 glass clip-corners flex items-center justify-center mx-auto mb-8 text-accent hud-border group relative">
                         <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <Shield size={36} />
                     </div>
                     <h1 className="flex flex-col items-center mb-6">
-                        <span className="text-2xl lg:text-3xl font-black text-main tracking-tighter leading-tight tech-text">VAULT_</span>
-                        <span className="text-2xl lg:text-3xl font-black text-accent underline decoration-2 underline-offset-4 tech-text tracking-tighter">AUTHORITY</span>
+                        <span className="text-xl lg:text-2xl font-black text-main tracking-tighter leading-tight tech-text">VAULT_</span>
+                        <span className="text-xl lg:text-2xl font-black text-accent underline decoration-2 underline-offset-4 tech-text tracking-tighter">AUTHORITY</span>
                     </h1>
                     <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60 leading-relaxed uppercase tracking-widest">
                         RESTRICTED_ACCESS_PORTAL // END_MINISTRATOR_REQUIRED
