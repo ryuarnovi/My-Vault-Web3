@@ -34,10 +34,10 @@
     --glass-bg: rgba(241, 245, 249, 0.8);
     --glass-border: rgba(15, 23, 42, 0.15);
     
-    --bg-accent-1: rgba(45, 55, 72, 0.1);
-    --bg-accent-2: rgba(74, 85, 104, 0.05);
-    --bg-accent-3: rgba(0, 0, 0, 0.02);
-    --pattern-opacity: 0.04;
+    --bg-accent-1: rgba(45, 55, 72, 0.05);
+    --bg-accent-2: rgba(74, 85, 104, 0.03);
+    --bg-accent-3: rgba(0, 0, 0, 0.01);
+    --pattern-opacity: 0.02;
 
     --success: #10b981;
     --error: #ef4444;

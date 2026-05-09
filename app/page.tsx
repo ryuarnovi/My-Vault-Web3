@@ -27,9 +27,8 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-white text-slate-900 relative selection:bg-accent/30 overflow-x-hidden">
       {/* Dynamic Background Elements */}
       <div className="dot-grid" />
-      <div className="scanline" />
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
       
       {/* Navigation Header */}
       <nav className="flex justify-between items-center px-6 md:px-12 py-5 fixed top-0 w-full z-[100] glass border-b border-glass-border">
@@ -72,9 +71,9 @@ export default function Home() {
             animate="visible"
             className="text-center max-w-5xl"
           >
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 glass px-5 py-2 rounded-full border border-accent/20 mb-10 shadow-xl shadow-accent/5">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 bg-slate-50 px-5 py-2 rounded-full border border-slate-200 mb-10 shadow-sm">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-20"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
               </span>
               <span className="text-[10px] font-black tech-text tracking-[0.2em] text-accent uppercase">
