@@ -287,22 +287,29 @@ function FilesContent() {
                                 <tbody>
                                     {files.map((file, i) => (
                                         <tr 
-                                            key={file.id} 
-                                            className="group hover:bg-accent/[0.04] transition-colors border-b border-glass-border"
-                                        >
-                                            <td className="px-8 py-6 font-bold text-main">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="p-2.5 glass clip-corners-sm group-hover:bg-accent transition-colors">
-                                                        <Files size={16} className="text-muted group-hover:text-primary-fg transition-colors" />
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="truncate max-w-[200px] lg:max-w-[300px]">{file.name}</span>
-                                                        <button onClick={() => copyToClipboard(file.name)} className="text-muted/30 hover:text-accent transition-colors">
-                                                            <Copy size={12} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </td>
+                                                                               >
+                                             <td className="px-8 py-6 font-bold text-main">
+                                                 <div className="flex items-center gap-4">
+                                                     <div className="w-10 h-10 glass clip-corners-sm flex items-center justify-center text-accent overflow-hidden shrink-0 group-hover:bg-accent transition-colors">
+                                                         {file.metadata?.thumbnailCid ? (
+                                                             <img 
+                                                                 src={`https://gateway.pinata.cloud/ipfs/${file.metadata.thumbnailCid}`} 
+                                                                 alt="" 
+                                                                 className="w-full h-full object-cover"
+                                                             />
+                                                         ) : (
+                                                             <Files size={16} className="text-muted group-hover:text-primary-fg transition-colors" />
+                                                         )}
+                                                     </div>
+                                                     <div className="flex items-center gap-2">
+                                                         <span className="truncate max-w-[200px] lg:max-w-[300px]">{file.name}</span>
+                                                         <button onClick={() => copyToClipboard(file.name)} className="text-muted/30 hover:text-accent transition-colors">
+                                                             <Copy size={12} />
+                                                         </button>
+                                                     </div>
+                                                 </div>
+                                             </td>
+              </td>
                                             <td className="px-8 py-6">
                                                 <span className="px-3 py-1.5 rounded-lg glass border border-glass-border text-[9px] font-black tech-text tracking-widest text-accent uppercase">
                                                     {file.category || 'OTHER'}
