@@ -309,7 +309,6 @@ function FilesContent() {
                                                      </div>
                                                  </div>
                                              </td>
-              </td>
                                             <td className="px-8 py-6">
                                                 <span className="px-3 py-1.5 rounded-lg glass border border-glass-border text-[9px] font-black tech-text tracking-widest text-accent uppercase">
                                                     {file.category || 'OTHER'}
