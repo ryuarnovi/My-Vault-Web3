@@ -338,27 +338,41 @@ export const VaultDashboard = ({
                             {/* Notification Popup */}
                             <AnimatePresence>
                                 {isNotificationsOpen && (
-                                    <motion.div
-                                        initial={{
-                                            opacity: 0,
-                                            y: 10,
-                                            scale: 0.95,
-                                        }}
-                                        animate={{
-                                            opacity: 1,
-                                            y: 0,
-                                            scale: 1,
-                                        }}
-                                        exit={{
-                                            opacity: 0,
-                                            y: 10,
-                                            scale: 0.95,
-                                        }}
-                                        transition={{
-                                            duration: 0.2,
-                                        }}
-                                        className="absolute top-[52px] right-0 w-[360px] max-h-[500px] overflow-hidden rounded-2xl bg-[#0A0A0E]/95 backdrop-blur-2xl border border-white/10 shadow-2xl z-[120]"
-                                    >
+                                   <motion.div
+    initial={{
+        opacity: 0,
+        y: 10,
+        scale: 0.95,
+    }}
+    animate={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+    }}
+    exit={{
+        opacity: 0,
+        y: 10,
+        scale: 0.95,
+    }}
+    transition={{
+        duration: 0.2,
+    }}
+    className="
+        fixed
+        top-[78px]
+        right-6
+        lg:right-10
+        w-[360px]
+        max-h-[500px]
+        overflow-hidden
+        rounded-2xl
+        bg-[#0A0A0E]/95
+        backdrop-blur-2xl
+        border border-white/10
+        shadow-2xl
+        z-[9999]
+    "
+>
                                         {/* Header */}
                                         <div className="px-5 py-4 border-b border-white/10 bg-accent/10">
                                             <div className="flex items-center justify-between">
