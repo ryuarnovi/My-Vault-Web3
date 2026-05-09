@@ -1,26 +1,114 @@
 # Vault3 - Secure Web3 Personal Vault
 
-Vault3 is a decentralized, end-to-end encrypted personal file storage solution built on **Solana** and **IPFS (via Pinata)**.
+Vault3 is a decentralized, end-to-end encrypted personal file storage solution built on Solana and IPFS (via Pinata).
 
 ![Dashboard Preview](./public/images/image.png)
 ![Upload Interface](./public/images/image2.png)
 
-## Features
+## Core Features
 
-- 🔐 **End-to-End Encryption**: Files are mangled locally in your browser using AES-256 before matrix transmission.
-- 🌐 **Global IPFS Scanning**: Detect and recover lost assets via Pinata network synchronization.
-- ⛓️ **Solana Proof of Existence**: Record immutable CID fragments to the Solana mainnet matrix for permanent verification.
-- 🎨 **Endfield HUD Design**: High-fidelity UI with crystal-liquid vibrancy, dot-grids, and HUD-inspired aesthetics.
-- 📁 **Class_Category System**: Dynamic organization of encrypted strings across various data classes.
-- 🛡️ **Zero-Knowledge Portal**: Restricted access for the authorized End-ministrator wallet only.
+- End-to-End Encryption: Files are processed locally in the browser using AES-256 before transmission.
+- Global IPFS Scanning: Detect and recover assets via Pinata network synchronization.
+- Solana Identity Protocol: Access control linked directly to Solana wallet signatures.
+- High-Fidelity UI: Professional HUD-style interface with glassmorphism and motion design.
+- Local Inventory Indexing: Persistent local tracking of file metadata and CIDs.
 
-## Architecture & Logic
+## System Architecture & Workflow
 
-- **Framework**: [Next.js](https://nextjs.org/) (Turbopack Powered)
-- **Blockchain**: [Solana](https://solana.com/) (@solana/web3.js)
-- **Primary Storage**: [IPFS](https://ipfs.tech/) via [Pinata](https://www.pinata.cloud/)
-- **Visual Matrix**: Tailwind CSS v4 & Framer Motion
-- **Aesthetics**: Arknights: Endfield Theme (Crystal Glass + HUD)
+Vault3 operates on a Zero-Knowledge Architecture principle, ensuring that sensitive data and encryption keys never leave the client-side environment.
+
+# 🛰️ Vault3 Architecture Overview
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│                  CLIENT TERMINAL (BROWSER)                   │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│   ┌──────────────────┐                                       │
+│   │ User Interface   │                                       │
+│   │      (HUD)       │                                       │
+│   └────────┬─────────┘                                       │
+│            │                                                 │
+│            ▼                                                 │
+│   ┌──────────────────┐                                       │
+│   │ Solana Wallet    │                                       │
+│   │ Authentication   │                                       │
+│   │  (Sign Message)  │                                       │
+│   └────────┬─────────┘                                       │
+│            │                                                 │
+│            ▼                                                 │
+│   ┌──────────────────┐                                       │
+│   │ Local Encryption │                                       │
+│   │    AES-256       │                                       │
+│   └────────┬─────────┘                                       │
+│            │                                                 │
+│            ▼                                                 │
+│   ┌──────────────────┐                                       │
+│   │ CID Inventory    │                                       │
+│   │  localStorage    │                                       │
+│   └────────┬─────────┘                                       │
+│            │                                                 │
+│            ▼                                                 │
+│   ┌──────────────────┐                                       │
+│   │ JSON Export      │                                       │
+│   │ Backup Utility   │                                       │
+│   └──────────────────┘                                       │
+│                                                              │
+└──────────────────────┬───────────────────────────────────────┘
+                       │
+                       │ Encrypted Blob
+                       ▼
+┌──────────────────────────────────────────────────────────────┐
+│                 NEXT.JS SERVERLESS API                       │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│   ┌──────────────────┐       ┌──────────────────┐            │
+│   │ Upload API Route │ ────▶ │ Authority        │            │
+│   └──────────────────┘       │ Gatekeeper       │            │
+│                              └────────┬─────────┘            │
+│                                       │                      │
+└───────────────────────────────────────┼──────────────────────┘
+                                        │
+                                        ▼
+┌──────────────────────────────────────────────────────────────┐
+│              DECENTRALIZED STORAGE LAYER                     │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│   ┌──────────────────┐       ┌──────────────────┐            │
+│   │ Pinata           │ ────▶ │ Global IPFS      │            │
+│   │ IPFS Management  │       │ Network          │            │
+│   └──────────────────┘       └──────────────────┘            │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+                       ▲
+                       │ Wallet Signature Verification
+                       │
+┌──────────────────────────────────────────────────────────────┐
+│                    SOLANA ECOSYSTEM                          │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│            ┌───────────────────────────┐                     │
+│            │ Solana Mainnet / Devnet   │                     │
+│            └───────────────────────────┘                     │
+│                                                              │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Technical Workflow
+
+1. **Authentication Phase**: Access is restricted via a Solana cryptographic handshake. The system validates the connected wallet address against a predefined authority list.
+2. **Security Phase**: Files are encrypted at the source (locally) using AES-256. Plaintext data never leaves the user's device.
+3. **Transmission Phase**: The encrypted binary blob is securely transmitted to the API layer, which acts as a bridge to the IPFS infrastructure.
+4. **Decentralized Storage Phase**: Assets are pinned globally via Pinata. IPFS generates a unique Content Identifier (CID) for the encrypted asset.
+5. **Inventory Sync**: The resulting CID is returned to the client and stored in a persistent local manifest for tracking and future retrieval.
+
+## Technical Stack
+
+- Framework: Next.js (Turbopack)
+- Blockchain: Solana (@solana/web3.js)
+- Storage: IPFS via Pinata
+- Styling: Vanilla CSS & Framer Motion
+- Design System: HUD-inspired glassmorphism
 
 ## Getting Started
 
@@ -30,15 +118,12 @@ Vault3 is a decentralized, end-to-end encrypted personal file storage solution b
 - Solana Wallet (e.g., Phantom)
 - Pinata API Keys
 
-### Environment Variables
+### Environment Setup
 
-Create a `.env` file in the root directory:
+Refer to the `.env.example` file for the required configuration parameters. Copy this to a `.env` file in your root directory:
 
-```env
-PINATA_JWT=your_pinata_jwt
-NEXT_PUBLIC_PINATA_GATEWAY=your_pinata_gateway_url
-NEXT_PUBLIC_SOLANA_RPC=https://api.mainnet-beta.solana.com
-NEXT_PUBLIC_ALLOWED_WALLET=your_authorized_solana_address
+```bash
+cp .env.example .env
 ```
 
 ### Installation
@@ -48,9 +133,9 @@ npm install
 npm run dev
 ```
 
-## Security
+## Security Statement
 
-Vault3 prioritizes user privacy. Encryption keys never leave your browser. Even if the IPFS gateway or storage provider is compromised, your files remain unreadable without your private key stored in your local vault metadata.
+Vault3 is designed so that encryption keys are never transmitted or stored on any server. Even in the event of a storage provider compromise, stored assets remain unreadable without the local metadata and original wallet authority.
 
 ## License
 
