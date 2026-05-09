@@ -262,14 +262,18 @@ body {
 }
 
 /* =====================================================
-   📱 MOBILE SIDEBAR — FORCE WHITE TEXT (LIGHT MODE FIX)
-   Ensures sidebar text is always white on mobile overlay,
-   regardless of light/dark theme setting.
+   📱 MOBILE SIDEBAR — GLASS EFFECT + WHITE TEXT FIX
+   Always renders with dark glass so white text is
+   readable in both light and dark mode.
    ===================================================== */
 .mobile-sidebar {
-    /* Override background to always be dark so white text is readable */
-    background-color: #0F172A !important;
-    border-right-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: rgba(10, 12, 20, 0.55) !important;
+    backdrop-filter: blur(28px) saturate(160%) brightness(0.85) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(160%) brightness(0.85) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow:
+        inset -1px 0 0 rgba(255, 255, 255, 0.05),
+        4px 0 40px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* All text inside mobile sidebar → white */
