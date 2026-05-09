@@ -236,38 +236,60 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                            className="absolute right-0 mt-4 w-80 glass-card border border-glass-border hud-border z-50 overflow-hidden shadow-2xl"
+                                            className="absolute right-0 mt-4 w-80 glass-card border border-glass-border hud-border z-50 overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] backdrop-blur-xl"
                                         >
-                                            <div className="p-4 border-b border-glass-border bg-accent/5">
-                                                <h3 className="text-[10px] font-black tech-text text-accent tracking-[0.2em] uppercase">System_Notifications</h3>
+                                            <div className="p-4 border-b border-glass-border bg-accent/5 backdrop-blur-md">
+                                                <div className="flex items-center justify-between">
+                                                    <h3 className="text-[10px] font-black tech-text text-accent tracking-[0.2em] uppercase">System_Notifications</h3>
+                                                    <span className="text-[9px] tech-text text-muted opacity-50 uppercase">{notifications.length} ACTIVE</span>
+                                                </div>
                                             </div>
-                                            <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                            <div className="max-h-[360px] overflow-y-auto custom-scrollbar bg-white/40">
                                                 {notifications.length === 0 ? (
-                                                    <div className="p-8 text-center">
-                                                        <p className="text-[10px] tech-text text-muted opacity-50">No recent activity detected.</p>
+                                                    <div className="p-12 text-center">
+                                                        <div className="w-12 h-12 glass rounded-full flex items-center justify-center text-muted/30 mx-auto mb-4">
+                                                            <Bell size={20} />
+                                                        </div>
+                                                        <p className="text-[10px] tech-text text-muted opacity-50 uppercase tracking-widest">No recent activity detected</p>
                                                     </div>
                                                 ) : (
-                                                    <div className="divide-y divide-glass-border">
+                                                    <div className="divide-y divide-glass-border/50">
                                                         {notifications.map((file) => (
-                                                            <div key={file.id} className="p-4 hover:bg-accent/5 transition-colors group cursor-pointer" onClick={() => router.push('/dashboard/files')}>
-                                                                <div className="flex gap-3">
-                                                                    <div className="w-8 h-8 glass clip-corners-sm flex items-center justify-center text-accent shrink-0 group-hover:bg-accent group-hover:text-white transition-colors">
-                                                                        <Files size={14} />
+                                                            <div 
+                                                                key={file.id} 
+                                                                className="p-5 hover:bg-accent/[0.03] transition-all group cursor-pointer relative" 
+                                                                onClick={() => {
+                                                                    setIsNotificationsOpen(false);
+                                                                    router.push('/dashboard/files');
+                                                                }}
+                                                            >
+                                                                <div className="flex gap-4">
+                                                                    <div className="w-10 h-10 glass clip-corners-sm flex items-center justify-center text-accent shrink-0 group-hover:bg-accent group-hover:text-white transition-all duration-300 hud-border shadow-sm">
+                                                                        <Files size={16} />
                                                                     </div>
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <p className="text-[11px] font-bold text-main truncate uppercase tracking-tight">{file.name}</p>
-                                                                        <p className="text-[9px] tech-text text-muted mt-1 uppercase">New File Detected // {new Date(file.uploadedAt).toLocaleDateString()}</p>
+                                                                    <div className="flex-1 min-w-0 py-0.5">
+                                                                        <p className="text-[11px] font-black text-main truncate uppercase tracking-tight group-hover:text-accent transition-colors">{file.name}</p>
+                                                                        <div className="flex items-center gap-2 mt-1.5">
+                                                                            <span className="px-1.5 py-0.5 bg-accent/5 text-[8px] tech-text text-accent rounded uppercase border border-accent/10">NEW_FILE</span>
+                                                                            <p className="text-[9px] tech-text text-muted opacity-60 uppercase tracking-tighter">
+                                                                                {new Date(file.uploadedAt).toLocaleDateString()} // {new Date(file.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+                                                                <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300" />
                                                             </div>
                                                         ))}
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="p-3 border-t border-glass-border text-center bg-accent/5">
+                                            <div className="p-4 border-t border-glass-border text-center bg-accent/[0.02] backdrop-blur-md">
                                                 <button 
-                                                    onClick={() => router.push('/dashboard/files')}
-                                                    className="text-[9px] font-black tech-text text-muted hover:text-accent transition-colors tracking-widest uppercase"
+                                                    onClick={() => {
+                                                        setIsNotificationsOpen(false);
+                                                        router.push('/dashboard/files');
+                                                    }}
+                                                    className="w-full py-2 text-[9px] font-black tech-text text-muted hover:text-accent transition-all tracking-[0.2em] uppercase border border-transparent hover:border-accent/20 rounded-lg"
                                                 >
                                                     View_All_Inventory
                                                 </button>
