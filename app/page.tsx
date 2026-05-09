@@ -31,36 +31,39 @@ export default function Home() {
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
       
       {/* Navigation Header */}
-      <nav className="flex justify-between items-center px-6 md:px-12 py-4 fixed top-0 w-full z-[100] bg-background/70 backdrop-blur-xl border-b border-glass-border transition-all duration-300">
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-3"
-        >
-          <div className="w-10 h-10 glass clip-corners flex items-center justify-center text-accent hud-border group relative shrink-0">
-            <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Shield size={20} />
-          </div>
-          <span className="text-xl md:text-2xl font-black tracking-tighter tech-text whitespace-nowrap">
-            VAULT_<span className="text-accent underline">THREE</span>
-          </span>
-        </motion.div>
-        
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-4 md:gap-8"
-        >
-          <Link href="/login" className="hidden sm:block">
-            <button className="text-[10px] font-black tech-text tracking-widest text-main hover:text-white transition-all uppercase px-5 py-2.5 border border-glass-border hover:bg-main rounded-full hover:shadow-lg active:scale-95">
-              ACCESS_CORE
-            </button>
-          </Link>
-          <ThemeToggle />
-          <div className="scale-90 md:scale-100 origin-right">
-            <WalletButton />
-          </div>
-        </motion.div>
+      <nav className="flex items-center px-4 md:px-12 py-4 fixed top-0 w-full z-[100] bg-background/70 backdrop-blur-xl border-b border-glass-border transition-all duration-300">
+        <div className="flex flex-1 items-center justify-between gap-2 md:gap-4 overflow-hidden">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-2 md:gap-3 shrink-0"
+          >
+            <div className="w-8 h-8 md:w-10 md:h-10 glass clip-corners flex items-center justify-center text-accent hud-border group relative shrink-0">
+              <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Shield size={16} className="md:hidden" />
+              <Shield size={20} className="hidden md:block" />
+            </div>
+            <span className="text-lg md:text-2xl font-black tracking-tighter tech-text whitespace-nowrap overflow-hidden">
+              VAULT_<span className="text-accent underline">3</span>
+            </span>
+          </motion.div>
+          
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="flex items-center gap-2 md:gap-6 shrink-0"
+          >
+            <Link href="/login" className="hidden xs:block">
+              <button className="text-[9px] md:text-[10px] font-black tech-text tracking-widest text-main hover:text-white transition-all uppercase px-3 md:px-5 py-2 md:py-2.5 border border-glass-border hover:bg-main rounded-full hover:shadow-lg active:scale-95">
+                ACCESS
+              </button>
+            </Link>
+            <ThemeToggle />
+            <div className="scale-75 md:scale-100 origin-right">
+              <WalletButton />
+            </div>
+          </motion.div>
+        </div>
       </nav>
 
       <main className="flex-1 relative z-10 overflow-hidden">
@@ -268,21 +271,20 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#0A0A0E] pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-white/5">
+      <footer className="bg-background pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-glass-border">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div className="sm:col-span-2">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 glass clip-corners flex items-center justify-center text-accent hud-border">
                   <Shield size={16} />
                 </div>
-                <span className="text-xl font-black tracking-tighter tech-text uppercase text-white">VAULT_<span className="text-accent">THREE</span></span>
+                <span className="text-xl font-black tracking-tighter tech-text uppercase text-main">VAULT_<span className="text-accent">3</span></span>
               </div>
-              <p className="text-sm text-slate-400 font-medium max-w-sm leading-relaxed mb-8 tech-text uppercase tracking-wider opacity-60">
+              <p className="text-sm text-muted font-medium max-w-sm leading-relaxed mb-8 tech-text uppercase tracking-wider opacity-60">
                 The next generation of decentralized storage. Built on Solana and IPFS for unmatched security, speed, and reliability.
               </p>
               <div className="flex gap-4">
-                {/* Social Placeholder Icons */}
                 <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
                   <Zap size={18} />
                 </div>
@@ -295,23 +297,28 @@ export default function Home() {
               </div>
             </div>
             
-            <div>
-              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-8">Protocol</h4>
-              <ul className="space-y-4">
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Documentation</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">API_Reference</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Solana_Scan</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">IPFS_Nodes</a></li>
-              </ul>
+            <div className="grid grid-cols-2 sm:grid-cols-1 gap-8 col-span-1 lg:col-span-1">
+              <div>
+                <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-6">Protocol</h4>
+                <ul className="space-y-4">
+                  <li><a href="#" className="text-[10px] text-muted font-bold tech-text hover:text-accent transition-colors uppercase tracking-widest">Docs</a></li>
+                  <li><a href="#" className="text-[10px] text-muted font-bold tech-text hover:text-accent transition-colors uppercase tracking-widest">API</a></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-6">Social</h4>
+                <ul className="space-y-4">
+                  <li><a href="#" className="text-[10px] text-muted font-bold tech-text hover:text-accent transition-colors uppercase tracking-widest">Github</a></li>
+                  <li><a href="#" className="text-[10px] text-muted font-bold tech-text hover:text-accent transition-colors uppercase tracking-widest">Twitter</a></li>
+                </ul>
+              </div>
             </div>
 
             <div>
-              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-8">Ecosystem</h4>
+              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-6">Legal</h4>
               <ul className="space-y-4">
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Community</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Github_Repo</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Audit_Report</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Changelog</a></li>
+                <li><a href="#" className="text-[10px] text-muted font-bold tech-text hover:text-accent transition-colors uppercase tracking-widest">Privacy</a></li>
+                <li><a href="#" className="text-[10px] text-muted font-bold tech-text hover:text-accent transition-colors uppercase tracking-widest">Terms</a></li>
               </ul>
             </div>
           </div>

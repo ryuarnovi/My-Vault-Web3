@@ -313,19 +313,25 @@ export const VaultDashboard = ({
                             />
                         </div>
 
-                        {/* Mobile Logo */}
-                        <Link href="/" className="flex items-center gap-2 lg:hidden md:hidden group hover:opacity-80 transition-opacity">
+                         <div className="flex items-center gap-2 lg:hidden">
                             <span className="text-lg font-black tech-text tracking-tighter text-main">
                                 Vault
                                 <span className="text-accent">
                                     3
                                 </span>
                             </span>
-                        </Link>
+                        </div>
                     </div>
 
                     {/* Right */}
-                    <div className="flex items-center gap-4 lg:gap-8">
+                    <div className="flex items-center gap-2 md:gap-4 lg:gap-8 shrink-0">
+                        <button
+                            onClick={() => router.push('/')}
+                            className="w-10 h-10 flex items-center justify-center glass clip-corners-sm text-muted hover:text-accent transition-colors"
+                            title="Back to Home"
+                        >
+                            <Home size={18} />
+                        </button>
                         {/* Notification */}
                         <div className="relative">
                             <button
