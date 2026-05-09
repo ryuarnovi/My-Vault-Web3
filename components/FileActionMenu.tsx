@@ -95,11 +95,19 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
             const url = window.URL.createObjectURL(blob);
 
             if (previewOnly) {
-                window.open(url, '_blank');
+                // Using a temporary link is more reliable for bypassing popup blockers
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // CRITICAL: Delay revocation so the new tab has time to load the data
+                setTimeout(() => window.URL.revokeObjectURL(url), 10000);
             } else {
                 const a = document.createElement('a');
                 a.href = url;
-                // Strip .enc suffix if we decrypted it successfully
                 let fileName = file.name;
                 if (isDecrypted && fileName.endsWith('.enc')) {
                     fileName = fileName.slice(0, -4);
@@ -108,9 +116,10 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                
+                // For downloads, we can revoke slightly faster or immediately
+                setTimeout(() => window.URL.revokeObjectURL(url), 1000);
             }
-            
-            window.URL.revokeObjectURL(url);
             
         } catch (error: any) {
             console.error('Action failed:', error);
