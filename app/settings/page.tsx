@@ -163,8 +163,18 @@ export default function SettingsPage() {
                         />
                         <SettingRow 
                             label="Max upload size" 
-                            desc="Batas per file" 
-                            action={<span className="text-[10px] font-black tech-text px-4 py-1.5 bg-accent/10 text-accent rounded-full">100 MB</span>}
+                            desc="Batas per file (dalam MB)" 
+                            action={
+                                <div className="flex items-center gap-2">
+                                    <input 
+                                        type="number"
+                                        value={settings.maxUploadSize}
+                                        onChange={(e) => handleUpdate({ maxUploadSize: parseInt(e.target.value) || 0 })}
+                                        className="w-20 bg-background/50 glass border border-glass-border rounded-lg px-3 py-1.5 text-[10px] font-black tech-text text-accent focus:outline-none focus:border-accent/50"
+                                    />
+                                    <span className="text-[10px] font-black tech-text text-muted opacity-50">MB</span>
+                                </div>
+                            }
                         />
                     </SettingSection>
 

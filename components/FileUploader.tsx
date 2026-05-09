@@ -6,6 +6,7 @@ import { Upload, File, X, Loader2, ShieldCheck, CheckCircle2, AlertCircle, Refre
 import { encryptFile, generateEncryptionKey, exportKey } from '@/lib/encryption';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { FILE_CATEGORIES } from '@/types/file';
+import { getVaultSettings } from '@/lib/settings';
 
 interface FileUploaderProps {
     onUploadSuccess?: (cid: string) => void;
@@ -25,6 +26,16 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files?.[0];
         if (selected) {
+            // Quick check
+            if (publicKey) {
+                const settings = getVaultSettings(publicKey.toBase58());
+                const maxSizeInBytes = settings.maxUploadSize * 1024 * 1024;
+                if (selected.size > maxSizeInBytes) {
+                    setError(`PAYLOAD_EXCEEDS_LIMIT: MAX_${settings.maxUploadSize}MB_ALLOWED`);
+                    return;
+                }
+            }
+            setError('');
             setFile(selected);
             setCustomFileName(selected.name);
         }
@@ -123,20 +134,31 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
         }
     };
 
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const f = e.dataTransfer.files[0];
+        if (f) {
+            if (publicKey) {
+                const settings = getVaultSettings(publicKey.toBase58());
+                const maxSizeInBytes = settings.maxUploadSize * 1024 * 1024;
+                if (f.size > maxSizeInBytes) {
+                    setError(`PAYLOAD_EXCEEDS_LIMIT: MAX_${settings.maxUploadSize}MB_ALLOWED`);
+                    return;
+                }
+            }
+            setError('');
+            setFile(f);
+            setCustomFileName(f.name);
+        }
+    };
+
     return (
         <div className="w-full max-w-2xl mx-auto">
             <motion.div
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => { 
-                    e.preventDefault(); 
-                    setIsDragging(false); 
-                    const f = e.dataTransfer.files[0]; 
-                    if(f) {
-                        setFile(f);
-                        setCustomFileName(f.name);
-                    }
-                }}
+                onDrop={handleDrop}
                 className={`glass-card p-10 lg:p-14 text-center border-2 border-dashed transition-all relative overflow-hidden hud-border ${
                     isDragging ? 'border-accent bg-accent/5' : 'border-glass-border'
                 }`}
