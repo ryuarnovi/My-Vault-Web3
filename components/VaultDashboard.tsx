@@ -260,87 +260,72 @@ export const VaultDashboard = ({
             {/* Main */}
             <main className="flex-1 flex flex-col overflow-hidden relative z-0">
                 {/* Topbar */}
-                <header className="px-5 lg:px-10 py-5 flex items-center justify-between border-b border-glass-border glass sticky top-0 z-50">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() =>
-                                setIsMobileMenuOpen(true)
-                            }
-                            className="lg:hidden w-10 h-10 flex items-center justify-center text-muted hover:text-main glass clip-corners-sm"
-                        >
-                            <Menu size={20} />
-                        </button>
+                <header className="px-4 md:px-10 py-3 md:py-5 border-b border-glass-border glass sticky top-0 z-50">
+                    <div className="max-w-[2000px] mx-auto flex items-center justify-between gap-2">
+                        {/* Left: Menu & Search */}
+                        <div className="flex items-center gap-2 md:gap-4 flex-1">
+                            <button
+                                onClick={() => setIsMobileMenuOpen(true)}
+                                className="lg:hidden w-9 h-9 flex items-center justify-center text-muted hover:text-main glass clip-corners-sm shrink-0"
+                            >
+                                <Menu size={18} />
+                            </button>
 
-                        <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border group focus-within:border-accent/40 transition-colors">
-                            <Search
-                                size={16}
-                                className="text-muted group-focus-within:text-accent transition-colors"
-                            />
-
-                            <input
-                                type="text"
-                                placeholder="ACCESS_VAULT_QUERY..."
-                                defaultValue={
-                                    new URLSearchParams(
-                                        typeof window !==
-                                        'undefined'
-                                            ? window.location.search
-                                            : ''
-                                    ).get('q') || ''
-                                }
-                                onChange={(e) => {
-                                    const q = e.target.value;
-
-                                    const params =
-                                        new URLSearchParams(
-                                            window.location.search
-                                        );
-
-                                    if (q) params.set('q', q);
-                                    else params.delete('q');
-
-                                    router.push(
-                                        `${pathname}?${params.toString()}`
-                                    );
-                                }}
-                                className="bg-transparent border-none text-main outline-none w-full text-[11px] font-black tech-text placeholder:text-muted/30 uppercase tracking-[0.15em]"
-                            />
+                            <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[300px] glass clip-corners-sm hud-border group focus-within:border-accent/40 transition-colors">
+                                <Search size={14} className="text-muted group-focus-within:text-accent" />
+                                <input
+                                    type="text"
+                                    placeholder="SEARCH_VAULT..."
+                                    defaultValue={new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('q') || ''}
+                                    onChange={(e) => {
+                                        const q = e.target.value;
+                                        const params = new URLSearchParams(window.location.search);
+                                        if (q) params.set('q', q); else params.delete('q');
+                                        router.push(`${pathname}?${params.toString()}`);
+                                    }}
+                                    className="bg-transparent border-none text-main outline-none w-full text-[10px] font-black tech-text uppercase tracking-widest"
+                                />
+                            </div>
                         </div>
 
-                         <div className="flex items-center gap-2 lg:hidden">
-                            <span className="text-lg font-black tech-text tracking-tighter text-main">
-                                Vault
-                                <span className="text-accent">
-                                    3
-                                </span>
+                        {/* Center: Logo (Mobile Only) */}
+                        <div className="flex lg:hidden items-center justify-center px-2 shrink-0">
+                            <span className="text-base md:text-lg font-black tech-text tracking-tighter text-main whitespace-nowrap">
+                                VAULT<span className="text-accent">3</span>
                             </span>
                         </div>
-                    </div>
 
-                    {/* Right */}
-                    <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
-                        <button
-                            onClick={() => router.push('/')}
-                            className="hidden xs:flex w-9 h-9 md:w-10 md:h-10 items-center justify-center glass clip-corners-sm text-muted hover:text-accent transition-colors"
-                            title="Back to Home"
-                        >
-                            <Home size={16} className="md:w-[18px] md:h-[18px]" />
-                        </button>
-                        {/* Notification */}
-                        <div className="relative">
+                        {/* Right: Actions */}
+                        <div className="flex items-center justify-end gap-1.5 md:gap-4 flex-1 shrink-0">
                             <button
-                                onClick={() =>
-                                    setIsNotificationsOpen(
-                                        !isNotificationsOpen
-                                    )
-                                }
-                                className={`relative w-10 h-10 flex items-center justify-center glass clip-corners-sm hover:scale-110 transition-all duration-200 ${
-                                    isNotificationsOpen
-                                        ? 'text-accent border border-accent/40 bg-accent/10'
-                                        : 'text-muted hover:text-accent'
-                                }`}
+                                onClick={() => router.push('/')}
+                                className="hidden sm:flex w-9 h-9 md:w-10 md:h-10 items-center justify-center glass clip-corners-sm text-muted hover:text-accent transition-colors"
+                                title="Back to Home"
                             >
-                                <Bell size={18} />
+                                <Home size={16} />
+                            </button>
+
+                            <div className="relative">
+                                <button
+                                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                                    className={`w-9 h-9 md:w-10 md:h-10 flex items-center justify-center glass clip-corners-sm transition-all ${
+                                        isNotificationsOpen ? 'text-accent bg-accent/10 border-accent/40' : 'text-muted hover:text-accent'
+                                    }`}
+                                >
+                                    <Bell size={16} />
+                                    {notifications.length > 0 && (
+                                        <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-accent rounded-full animate-pulse shadow-[0_0_8px_var(--accent)]" />
+                                    )}
+                                </button>
+                            </div>
+
+                            <ThemeToggle />
+                            <div className="scale-[0.8] md:scale-100 origin-right">
+                                <WalletButton />
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
                                 {notifications.length > 0 && (
                                     <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full animate-pulse shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)]" />
