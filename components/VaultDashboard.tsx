@@ -18,6 +18,7 @@ import {
 import { useRouter, usePathname } from 'next/navigation';
 import { WalletButton } from './WalletButton';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { getFileInventory } from '@/lib/vault';
 
 interface SidebarItemProps {
     icon: React.ReactNode;
