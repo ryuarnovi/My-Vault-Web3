@@ -268,7 +268,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-20 px-6 md:px-12 border-t border-glass-border glass relative z-20">
+      <footer className="pt-20 pb-10 px-6 md:px-12 glass relative z-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">

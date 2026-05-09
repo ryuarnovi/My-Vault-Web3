@@ -239,7 +239,7 @@ function FilesContent() {
                     <button 
                         onClick={scanRemote}
                         disabled={isScanning}
-                        className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-8 py-3.5 bg-accent text-accent-fg rounded-xl font-black text-[10px] tracking-widest tech-text hover:brightness-110 transition-all disabled:opacity-50 clip-corners-sm shadow-xl shadow-accent/20"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-3 px-8 py-3.5 bg-accent text-white rounded-xl font-black text-[10px] tracking-widest tech-text hover:brightness-110 transition-all disabled:opacity-50 clip-corners-sm shadow-xl shadow-accent/20"
                     >
                         {isScanning ? <RefreshCw size={14} className="animate-spin" /> : <Shield size={14} />}
                         {isScanning ? 'SCANNING...' : 'SCAN_IPFS'}
@@ -356,7 +356,7 @@ function FilesContent() {
                                 </span>
                                 <button 
                                     onClick={syncAll}
-                                    className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-fg text-[9px] font-black uppercase tech-text tracking-widest rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20"
+                                    className="flex items-center gap-2 px-4 py-2 bg-accent text-white text-[9px] font-black uppercase tech-text tracking-widest rounded-lg hover:brightness-110 transition-all shadow-lg shadow-accent/20"
                                 >
                                     <RefreshCw size={12} />
                                     SYNC_ALL_TO_VAULT
@@ -398,7 +398,7 @@ function FilesContent() {
                                                     </span>
                                                     <button 
                                                         onClick={() => handleImport(rf)}
-                                                        className="px-4 py-1.5 rounded-lg bg-accent text-accent-fg text-[10px] font-black uppercase tech-text tracking-widest hover:brightness-110 transition-all shadow-lg shadow-accent/20"
+                                                        className="px-4 py-1.5 rounded-lg bg-accent text-white text-[10px] font-black uppercase tech-text tracking-widest hover:brightness-110 transition-all shadow-lg shadow-accent/20"
                                                     >
                                                         RESTORE
                                                     </button>
