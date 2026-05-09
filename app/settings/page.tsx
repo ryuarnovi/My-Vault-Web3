@@ -60,6 +60,7 @@ const Toggle = ({ active, onToggle }: { active: boolean; onToggle: () => void })
 export default function SettingsPage() {
     const { publicKey } = useWallet();
     const [settings, setSettings] = useState<any>(null);
+    const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
     useEffect(() => {
         if (publicKey) {
@@ -70,8 +71,14 @@ export default function SettingsPage() {
 
     const handleUpdate = (updates: any) => {
         if (!publicKey) return;
+        setSaveStatus('saving');
         const updated = updateVaultSettings(publicKey.toBase58(), updates);
         setSettings(updated);
+        
+        setTimeout(() => {
+            setSaveStatus('saved');
+            setTimeout(() => setSaveStatus('idle'), 2000);
+        }, 500);
     };
 
     const handleExport = () => {
@@ -104,9 +111,21 @@ export default function SettingsPage() {
                         <h1 className="text-4xl lg:text-6xl font-black mb-3 text-main tracking-tighter leading-none">
                             SYSTEM_<span className="text-accent">SETTINGS</span>
                         </h1>
-                        <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60">
-                            CORE_CONFIGURATION // ADJUSTING_TERMINAL_PARAMETERS
-                        </p>
+                        <div className="flex items-center justify-between">
+                            <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60">
+                                CORE_CONFIGURATION // ADJUSTING_TERMINAL_PARAMETERS
+                            </p>
+                            {saveStatus !== 'idle' && (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: 10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className={`flex items-center gap-2 tech-text text-[10px] font-black ${saveStatus === 'saving' ? 'text-accent' : 'text-success'}`}
+                                >
+                                    {saveStatus === 'saving' ? <Database size={12} className="animate-pulse" /> : <CheckCircle2 size={12} />}
+                                    {saveStatus === 'saving' ? 'SYNCING_CHANGES...' : 'PROTOCOL_UPDATED'}
+                                </motion.div>
+                            )}
+                        </div>
                     </motion.div>
                 </header>
 
@@ -170,15 +189,19 @@ export default function SettingsPage() {
 
                     {/* Purge Cache */}
                     <SettingSection title="Purge_Local_Cache" icon={<Trash2 size={18} />}>
-                        <SettingRow 
+                         <SettingRow 
                             label="Hapus referensi lokal" 
-                            desc="File di IPFS tetap aman, hanya data browser yang dihapus" 
+                            desc="File di IPFS tetap aman, hanya data terminal ini yang dihapus" 
                             action={
                                 <button 
                                     onClick={() => {
-                                        if(confirm('INITIATE LOCAL PURGE? Data strings will be detached from this terminal.')) {
-                                            localStorage.clear();
-                                            window.location.reload();
+                                        if(confirm('INITIATE LOCAL PURGE? Data strings for THIS WALLET will be detached from this terminal. IPFS assets will remain intact.')) {
+                                            const addr = publicKey?.toBase58();
+                                            if (addr) {
+                                                localStorage.removeItem(`vault3_settings_${addr}`);
+                                                localStorage.removeItem(`vault3_file_inventory_${addr}`);
+                                                window.location.href = '/dashboard';
+                                            }
                                         }
                                     }}
                                     className="text-[9px] font-black tech-text bg-error/10 text-error hover:bg-error hover:text-white transition-all px-6 py-2 rounded-lg border border-error/20 uppercase tracking-widest"
