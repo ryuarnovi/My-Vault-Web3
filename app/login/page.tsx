@@ -90,7 +90,7 @@ function LoginForm() {
                         <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <Shield size={36} />
                     </div>
-                    <h1 className="text-3xl lg:text-4xl font-black mb-4 text-main tracking-tighter leading-none tech-text">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-4 text-main tracking-tighter leading-tight tech-text break-words">
                         VAULT_<span className="text-accent underline">AUTHORITY</span>
                     </h1>
                     <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60 leading-relaxed uppercase tracking-widest">

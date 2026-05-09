@@ -256,7 +256,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-4xl mx-auto relative z-10"
           >
-            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none">Ready to <span className="text-accent">Secure</span> Your World?</h2>
+            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none text-main">Ready to <span className="text-accent">Secure</span> Your World?</h2>
             <p className="text-lg text-muted tech-text mb-16 opacity-70 tracking-widest uppercase">Take control of your data today. No sign-ups. Just your wallet.</p>
             <Link href="/login">
               <button className="premium-button px-16 py-8 text-xs font-black tracking-[0.4em] tech-text uppercase clip-corners hover:scale-110 active:scale-95 transition-all">
@@ -268,18 +268,18 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-12 px-12 border-t border-glass-border glass">
+      <footer className="py-12 px-12 border-t border-glass-border glass relative z-20">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
-            <span className="text-lg font-black tracking-tighter tech-text uppercase">VAULT_<span className="text-accent">THREE</span></span>
+            <span className="text-lg font-black tracking-tighter tech-text uppercase text-main">VAULT_<span className="text-accent">THREE</span></span>
           </div>
-          <div className="flex gap-10 text-[10px] font-black tech-text text-muted uppercase tracking-widest">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-[10px] font-black tech-text text-muted uppercase tracking-widest">
             <a href="#" className="hover:text-accent transition-colors">Github</a>
             <a href="#" className="hover:text-accent transition-colors">Documentation</a>
             <a href="#" className="hover:text-accent transition-colors">Solana_Mainnet</a>
             <a href="#" className="hover:text-accent transition-colors">IPFS_Network</a>
           </div>
-          <p className="text-[9px] font-black tech-text text-muted/40 uppercase tracking-[0.2em]">
+          <p className="text-[9px] font-black tech-text text-muted/60 uppercase tracking-[0.2em]">
             © 2024 Ryuarnovi // Decentralized Precision
           </p>
         </div>
