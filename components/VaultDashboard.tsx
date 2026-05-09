@@ -271,12 +271,6 @@ export const VaultDashboard = ({
                             <Menu size={20} />
                         </button>
 
-                        <Link href="/">
-                            <button className="w-10 h-10 flex items-center justify-center text-muted hover:text-accent glass clip-corners-sm hover:scale-110 transition-all duration-200" title="Back to Home">
-                                <Home size={18} />
-                            </button>
-                        </Link>
-
                         <div className="hidden md:flex items-center gap-3 px-5 py-2.5 min-w-[340px] glass clip-corners-sm hud-border group focus-within:border-accent/40 transition-colors">
                             <Search
                                 size={16}
@@ -324,13 +318,13 @@ export const VaultDashboard = ({
                     </div>
 
                     {/* Right */}
-                    <div className="flex items-center gap-2 md:gap-4 lg:gap-8 shrink-0">
+                    <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
                         <button
                             onClick={() => router.push('/')}
-                            className="w-10 h-10 flex items-center justify-center glass clip-corners-sm text-muted hover:text-accent transition-colors"
+                            className="hidden xs:flex w-9 h-9 md:w-10 md:h-10 items-center justify-center glass clip-corners-sm text-muted hover:text-accent transition-colors"
                             title="Back to Home"
                         >
-                            <Home size={18} />
+                            <Home size={16} className="md:w-[18px] md:h-[18px]" />
                         </button>
                         {/* Notification */}
                         <div className="relative">

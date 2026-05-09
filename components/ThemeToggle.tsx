@@ -27,7 +27,7 @@ export const ThemeToggle = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="w-10 h-10 flex items-center justify-center glass clip-corners-sm hover:scale-110 transition-all duration-200 text-muted hover:text-accent relative overflow-hidden group"
+            className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center glass clip-corners-sm hover:scale-110 transition-all duration-200 text-muted hover:text-accent relative overflow-hidden group shrink-0"
             title={isDark ? "Engage Light Mode" : "Engage Dark Mode"}
         >
             <motion.div
@@ -38,7 +38,7 @@ export const ThemeToggle = () => {
                 }}
                 className="absolute"
             >
-                <Moon size={18} />
+                <Moon size={16} className="md:w-[18px] md:h-[18px]" />
             </motion.div>
             <motion.div
                 initial={false}
@@ -48,7 +48,7 @@ export const ThemeToggle = () => {
                 }}
                 className="absolute"
             >
-                <Sun size={18} />
+                <Sun size={16} className="md:w-[18px] md:h-[18px]" />
             </motion.div>
             
             {/* HUD Corner Decor */}

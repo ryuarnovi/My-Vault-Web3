@@ -2,12 +2,12 @@
 
 Vault3 is a decentralized, end-to-end encrypted personal file storage solution built on Solana and IPFS (via Pinata).
 
-![Dashboard Preview](./public/images/dashboard-main.jpeg)
-![Inventory View](./public/images/inventory-view.jpeg)
-![Dark Mode Preview](./public/images/dark-mode-preview.jpeg)
+![Dashboard Preview](./public/images/dashboard-file.jpeg)
+![Inventory View](./public/images/homepage.jpeg)
+![Dark Mode Preview](./public/images/overview-stat.jpeg)
 ![Upload Interface](./public/images/upload-interface.jpeg)
 ![Settings Panel](./public/images/settings-panel.jpeg)
-![Mobile Interface](./public/images/mobile-view.jpeg)
+![Mobile Interface](./public/images/dashboard-sync.jpeg)
 
 ## Core Features
 
