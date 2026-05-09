@@ -7,7 +7,6 @@ import { encryptFile, generateEncryptionKey, exportKey } from '@/lib/encryption'
 import { useWallet } from '@solana/wallet-adapter-react';
 import { FILE_CATEGORIES } from '@/types/file';
 import { getVaultSettings } from '@/lib/settings';
-import { generateThumbnail } from '@/lib/thumbnails';
 
 interface FileUploaderProps {
     onUploadSuccess?: (cid: string) => void;
@@ -18,12 +17,9 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
     const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [status, setStatus] = useState<'idle' | 'encrypting' | 'uploading' | 'signing' | 'success' | 'error'>('idle');
-    const [progress, setProgress] = useState(0);
     const [error, setError] = useState('');
     const [category, setCategory] = useState(FILE_CATEGORIES[0]);
     const [customFileName, setCustomFileName] = useState('');
-    const [thumbnailBlob, setThumbnailBlob] = useState<Blob | null>(null);
-    const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,17 +37,6 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             setError('');
             setFile(selected);
             setCustomFileName(selected.name);
-            
-            // Generate preview
-            generateThumbnail(selected).then(blob => {
-                if (blob) {
-                    setThumbnailBlob(blob);
-                    setThumbnailPreview(URL.createObjectURL(blob));
-                } else {
-                    setThumbnailBlob(null);
-                    setThumbnailPreview(null);
-                }
-            });
         }
     };
 
@@ -64,17 +49,6 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             setStatus('encrypting');
             setError('');
             
-            let thumbnailBase64 = '';
-            
-            // 1. Process Thumbnail as Base64 instead of uploading to Pinata
-            if (thumbnailBlob) {
-                const reader = new FileReader();
-                thumbnailBase64 = await new Promise((resolve) => {
-                    reader.onloadend = () => resolve(reader.result as string);
-                    reader.readAsDataURL(thumbnailBlob);
-                });
-            }
-
             // 2. Generate Key & Encrypt
             const key = await generateEncryptionKey();
             const { encryptedData, iv } = await encryptFile(file, key);
@@ -142,8 +116,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                     iv: Buffer.from(iv).toString('base64'),
                     encryptionKey: await exportKey(key),
                     txHash: txHash || undefined,
-                    category: category,
-                    thumbnail: thumbnailBase64
+                    category: category
                 }
             };
             
@@ -176,16 +149,6 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             setError('');
             setFile(f);
             setCustomFileName(f.name);
-            
-            generateThumbnail(f).then(blob => {
-                if (blob) {
-                    setThumbnailBlob(blob);
-                    setThumbnailPreview(URL.createObjectURL(blob));
-                } else {
-                    setThumbnailBlob(null);
-                    setThumbnailPreview(null);
-                }
-            });
         }
     };
 

@@ -8,7 +8,8 @@ Vault3 is a decentralized, end-to-end encrypted personal file storage solution b
 ## Core Features
 
 - End-to-End Encryption: Files are processed locally in the browser using AES-256 before transmission.
-- Global IPFS Scanning: Detect and recover assets via Pinata network synchronization.
+- Resilient IPFS Retrieval: Multi-gateway fallback system (Cloudflare, IPFS.io, Pinata) ensures reliable asset access.
+- Smart MIME Detection: Automatic file type identification ensures images and PDFs open directly in-browser.
 - Solana Identity Protocol: Access control linked directly to Solana wallet signatures.
 - High-Fidelity UI: Professional HUD-style interface with glassmorphism and motion design.
 - Local Inventory Indexing: Persistent local tracking of file metadata and CIDs.
@@ -100,7 +101,8 @@ Vault3 operates on a Zero-Knowledge Architecture principle, ensuring that sensit
 2. **Security Phase**: Files are encrypted at the source (locally) using AES-256. Plaintext data never leaves the user's device.
 3. **Transmission Phase**: The encrypted binary blob is securely transmitted to the API layer, which acts as a bridge to the IPFS infrastructure.
 4. **Decentralized Storage Phase**: Assets are pinned globally via Pinata. IPFS generates a unique Content Identifier (CID) for the encrypted asset.
-5. **Inventory Sync**: The resulting CID is returned to the client and stored in a persistent local manifest for tracking and future retrieval.
+5. **Retrieval & Decryption**: When accessed, the system attempts to fetch the asset via a priority list of IPFS gateways. Upon successful retrieval, it applies smart MIME detection and decrypts the binary stream locally for secure viewing or download.
+6. **Inventory Sync**: The resulting metadata is stored in a persistent local manifest for tracking and future zero-knowledge retrieval.
 
 ## Technical Stack
 
