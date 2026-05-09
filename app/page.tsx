@@ -267,7 +267,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#0A0A0E] pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-white/5 mt-auto">
+      <footer className="bg-[#0A0A0E] pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
