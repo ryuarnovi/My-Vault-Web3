@@ -34,11 +34,34 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
             
             const downloadUrl = `${gateway}ipfs/${file.cid}`;
             
-            console.log('Fetching from:', downloadUrl);
-            const response = await fetch(downloadUrl);
+            console.log('Fetching from primary gateway:', downloadUrl);
+            let response = await fetch(downloadUrl).catch(() => null);
             
-            if (!response.ok) {
-                throw new Error('Failed to fetch from IPFS gateway.');
+            // 2. Fallback Logic if primary fails
+            if (!response || !response.ok) {
+                console.warn('Primary gateway failed or CORS blocked. Trying fallbacks...');
+                const fallbacks = [
+                    `https://cloudflare-ipfs.com/ipfs/${file.cid}`,
+                    `https://ipfs.io/ipfs/${file.cid}`,
+                    `https://dweb.link/ipfs/${file.cid}`
+                ];
+                
+                for (const url of fallbacks) {
+                    try {
+                        console.log('Trying fallback:', url);
+                        const fallbackRes = await fetch(url);
+                        if (fallbackRes.ok) {
+                            response = fallbackRes;
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
+                    }
+                }
+            }
+            
+            if (!response || !response.ok) {
+                throw new Error('All IPFS gateways failed to respond. This might be a temporary network issue or the file is still propagating.');
             }
             
             const encryptedData = await response.arrayBuffer();
@@ -177,16 +200,6 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
                                 DECRYPT_&_DOWNLOAD
                             </button>
                             
-                            <a 
-                                href={`https://ipfs.io/ipfs/${file.cid}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="w-full flex items-center gap-4 px-6 py-5 text-[11px] font-black tech-text tracking-widest text-muted hover:bg-white/5 transition-all uppercase"
-                            >
-                                <ExternalLink size={18} />
-                                OPEN_RAW_IPFS (ENCRYPTED)
-                            </a>
                             
                             <div className="bg-accent/5">
                                 <button 
