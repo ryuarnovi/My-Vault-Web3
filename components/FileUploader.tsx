@@ -213,10 +213,10 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                                                     key={cat}
                                                     type="button"
                                                     onClick={() => setCategory(cat)}
-                                                    className={`px-5 py-2.5 rounded-lg text-[10px] font-black tech-text tracking-widest transition-all clip-corners-sm ${
+                                                    className={`px-5 py-2.5 rounded-lg text-[10px] font-black tech-text tracking-widest transition-all clip-corners-sm border ${
                                                         category === cat 
-                                                        ? 'bg-accent text-accent-fg shadow-lg' 
-                                                        : 'glass text-muted hover:text-main'
+                                                        ? 'bg-accent text-white border-accent shadow-lg shadow-accent/20' 
+                                                        : 'glass text-muted hover:text-accent hover:border-accent/40'
                                                     }`}
                                                 >
                                                     {cat.toUpperCase()}

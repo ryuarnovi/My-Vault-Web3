@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Shield, Key, Bell, Database, Trash2, ShieldAlert, Download, CheckCircle2, MoreVertical } from 'lucide-react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getVaultSettings, updateVaultSettings } from '@/lib/settings';
+import { getFileInventory } from '@/lib/vault';
 
 const SettingRow = ({ label, desc, action, badge }: { label: string; desc: string; action: React.ReactNode; badge?: React.ReactNode }) => (
     <div className="flex items-center justify-between py-6 group border-b border-glass-border last:border-0">
@@ -71,6 +72,20 @@ export default function SettingsPage() {
         if (!publicKey) return;
         const updated = updateVaultSettings(publicKey.toBase58(), updates);
         setSettings(updated);
+    };
+
+    const handleExport = () => {
+        if (!publicKey) return;
+        const inventory = getFileInventory(publicKey.toBase58());
+        const dataStr = JSON.stringify(inventory, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = `vault_export_${publicKey.toBase58().slice(0, 8)}_${new Date().toISOString().split('T')[0]}.json`;
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
     };
 
     if (!settings) return null;
@@ -176,7 +191,10 @@ export default function SettingsPage() {
                             label="Export CID log dulu" 
                             desc="Simpan semua hash sebelum purge" 
                             action={
-                                <button className="text-[9px] font-black tech-text bg-accent/5 text-accent hover:bg-accent hover:text-white transition-all px-6 py-2 rounded-lg border border-accent/20 uppercase tracking-widest flex items-center gap-2">
+                                <button 
+                                    onClick={handleExport}
+                                    className="text-[9px] font-black tech-text bg-accent/5 text-accent hover:bg-accent hover:text-white transition-all px-6 py-2 rounded-lg border border-accent/20 uppercase tracking-widest flex items-center gap-2"
+                                >
                                     <Download size={12} /> Download .json
                                 </button>
                             }

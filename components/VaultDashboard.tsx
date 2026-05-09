@@ -244,16 +244,16 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                                                     <span className="text-[9px] tech-text text-muted opacity-50 uppercase">{notifications.length} ACTIVE</span>
                                                 </div>
                                             </div>
-                                            <div className="max-h-[360px] overflow-y-auto custom-scrollbar bg-white/40">
+                                            <div className="max-h-[360px] overflow-y-auto custom-scrollbar bg-white">
                                                 {notifications.length === 0 ? (
-                                                    <div className="p-12 text-center">
+                                                    <div className="p-12 text-center bg-white">
                                                         <div className="w-12 h-12 glass rounded-full flex items-center justify-center text-muted/30 mx-auto mb-4">
                                                             <Bell size={20} />
                                                         </div>
                                                         <p className="text-[10px] tech-text text-muted opacity-50 uppercase tracking-widest">No recent activity detected</p>
                                                     </div>
                                                 ) : (
-                                                    <div className="divide-y divide-glass-border/50">
+                                                    <div className="divide-y divide-glass-border/50 bg-white">
                                                         {notifications.map((file) => (
                                                             <div 
                                                                 key={file.id} 
@@ -271,7 +271,7 @@ export const VaultDashboard = ({ children }: { children: React.ReactNode }) => {
                                                                         <p className="text-[11px] font-black text-main truncate uppercase tracking-tight group-hover:text-accent transition-colors">{file.name}</p>
                                                                         <div className="flex items-center gap-2 mt-1.5">
                                                                             <span className="px-1.5 py-0.5 bg-accent/5 text-[8px] tech-text text-accent rounded uppercase border border-accent/10">NEW_FILE</span>
-                                                                            <p className="text-[9px] tech-text text-muted opacity-60 uppercase tracking-tighter">
+                                                                            <p className="text-[9px] tech-text text-muted opacity-60 uppercase tracking-tighter font-bold">
                                                                                 {new Date(file.uploadedAt).toLocaleDateString()} // {new Date(file.uploadedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                                             </p>
                                                                         </div>
