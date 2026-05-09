@@ -35,10 +35,10 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
             : 'text-muted hover:bg-white/5 hover:text-main'
         } [.dark-sidebar_&]:${active ? 'text-accent' : 'text-slate-100 hover:text-white'}`}
     >
-        <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity [.dark-sidebar_&]:text-slate-100'}>
+        <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity'}>
             {icon}
         </span>
-        <span className="font-semibold text-sm tracking-tight [.dark-sidebar_&]:text-slate-100 [.dark-sidebar_&.group:hover]:text-white transition-colors">{label}</span>
+        <span className="font-semibold text-sm tracking-tight transition-colors">{label}</span>
         {active && (
             <motion.div 
                 layoutId="sidebar-active"

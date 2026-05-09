@@ -62,7 +62,6 @@ function FilesContent() {
 
             if (data.files) {
                 setRemoteFiles(data.files);
-                setViewMode('remote');
             }
         } catch (err: any) {
             console.error('Remote scan failed:', err);
@@ -225,8 +224,8 @@ function FilesContent() {
                                     onClick={() => setActiveCategory(cat)}
                                     className={`px-5 py-2.5 rounded-lg text-[10px] font-black tracking-widest tech-text transition-all clip-corners-sm ${
                                         activeCategory === cat 
-                                        ? 'bg-accent text-accent-fg shadow-lg' 
-                                        : 'glass text-muted hover:text-main'
+                                        ? 'bg-accent text-white shadow-lg' 
+                                        : 'glass text-muted hover:text-main hover:bg-white/5'
                                     }`}
                                 >
                                     {cat.toUpperCase()}
@@ -289,9 +288,7 @@ function FilesContent() {
                                     {files.map((file, i) => (
                                         <tr 
                                             key={file.id} 
-                                            className={`group hover:bg-white/[0.03] transition-colors ${
-                                                i < files.length - 1 ? 'border-b border-glass-border' : ''
-                                            }`}
+                                            className="group hover:bg-white/[0.05] transition-colors border-b border-glass-border"
                                         >
                                             <td className="px-8 py-6 font-bold text-main">
                                                 <div className="flex items-center gap-4">

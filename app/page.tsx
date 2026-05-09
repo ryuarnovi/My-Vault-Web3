@@ -63,9 +63,9 @@ export default function Home() {
         </motion.div>
       </nav>
 
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 overflow-hidden">
         {/* Hero Section */}
-        <section className="min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6">
+        <section className="flex flex-col items-center justify-center pt-48 pb-32 px-6">
           <motion.div
             variants={containerVariants}
             initial="hidden"
