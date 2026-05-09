@@ -116,13 +116,13 @@ function DashboardContent() {
             setFiles(sorted.slice(0, 5));
             
             const totalSize = newInventory.reduce((acc: number, f: any) => acc + f.size, 0);
-            setStats({
+            setStats(prev => ({
+                ...prev,
                 usage: totalSize > 1024 * 1024 
                     ? `${(totalSize / (1024 * 1024)).toFixed(1)} MB` 
                     : `${(totalSize / 1024).toFixed(1)} KB`,
-                count: newInventory.length,
-                shared: 0
-            });
+                count: newInventory.length
+            }));
 
             // 2. Background Sync
             fetch('/api/files/delete', {
