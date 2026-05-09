@@ -28,7 +28,6 @@ export default function Home() {
       {/* Dynamic Background Elements */}
       <div className="dot-grid" />
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
       
       {/* Navigation Header */}
       <nav className="flex justify-between items-center px-6 md:px-12 py-5 fixed top-0 w-full z-[100] glass border-b border-glass-border">
