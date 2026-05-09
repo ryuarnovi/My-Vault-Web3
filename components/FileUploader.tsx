@@ -19,11 +19,15 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState('');
     const [category, setCategory] = useState(FILE_CATEGORIES[0]);
+    const [customFileName, setCustomFileName] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files?.[0];
-        if (selected) setFile(selected);
+        if (selected) {
+            setFile(selected);
+            setCustomFileName(selected.name);
+        }
     };
 
     const [recordProof, setRecordProof] = useState(false);
@@ -44,7 +48,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             // 2. Prepare Form Data
             const formData = new FormData();
             const encryptedBlob = new Blob([encryptedData], { type: 'application/octet-stream' });
-            formData.append('file', encryptedBlob, `${file.name}.enc`);
+            formData.append('file', encryptedBlob, `${customFileName}.enc`);
             formData.append('wallet', publicKey.toBase58());
             formData.append('isEncrypted', 'true');
 
@@ -77,7 +81,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                     setStatus('signing');
                     const { createProofTransaction, getSolanaConnection } = await import('@/lib/solana');
                     const connection = getSolanaConnection();
-                    const transaction = await createProofTransaction(publicKey, data.cid, file.name);
+                    const transaction = await createProofTransaction(publicKey, data.cid, customFileName);
                     
                     txHash = await sendTransaction(transaction, connection);
                     console.log('Solana proof recorded:', txHash);
@@ -90,7 +94,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             // 5. Save to Local Inventory
             const vaultFile = {
                 id: Math.random().toString(36).substr(2, 9),
-                name: file.name,
+                name: customFileName,
                 cid: data.cid,
                 size: file.size,
                 type: file.type,
@@ -124,7 +128,15 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
             <motion.div
                 onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if(f) setFile(f); }}
+                onDrop={(e) => { 
+                    e.preventDefault(); 
+                    setIsDragging(false); 
+                    const f = e.dataTransfer.files[0]; 
+                    if(f) {
+                        setFile(f);
+                        setCustomFileName(f.name);
+                    }
+                }}
                 className={`glass-card p-10 lg:p-14 text-center border-2 border-dashed transition-all relative overflow-hidden hud-border ${
                     isDragging ? 'border-accent bg-accent/5' : 'border-glass-border'
                 }`}
@@ -176,7 +188,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                                 </div>
                                 <div className="text-left flex-1 overflow-hidden">
                                     <p className="font-bold text-main truncate text-sm">{file.name}</p>
-                                    <p className="text-[10px] text-muted tech-text opacity-60">RAW_SIZE: {(file.size / 1024).toFixed(1)} KB</p>
+                                    <p className="text-[10px] text-muted tech-text opacity-40 italic">ORIGINAL_SOURCE_DETECTION</p>
                                 </div>
                                 {status === 'idle' && (
                                     <button onClick={() => setFile(null)} className="p-2 text-muted hover:text-error transition-colors">
@@ -187,6 +199,23 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
 
                             {status === 'idle' && (
                                 <>
+                                    <div className="w-full flex flex-col gap-4 items-start mb-2">
+                                        <label className="text-[10px] font-black text-muted uppercase tracking-[0.2em] tech-text pl-1 opacity-50">Rename_Payload</label>
+                                        <div className="w-full relative group">
+                                            <input 
+                                                type="text"
+                                                value={customFileName}
+                                                onChange={(e) => setCustomFileName(e.target.value)}
+                                                className="w-full bg-background/50 glass border border-glass-border rounded-xl px-5 py-4 text-sm font-bold text-main focus:outline-none focus:border-accent/50 transition-all tech-text"
+                                                placeholder="ENTER_NEW_NAME"
+                                            />
+                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-accent opacity-30 group-focus-within:opacity-100 transition-opacity">
+                                                <RefreshCw size={12} className="animate-spin-slow" />
+                                            </div>
+                                        </div>
+                                        <p className="text-[9px] text-muted tech-text opacity-40 pl-1">SIZE: {(file.size / 1024).toFixed(1)} KB // EXTENSION_AUTO_MANAGED</p>
+                                    </div>
+
                                     <div className="flex items-center gap-4 w-full p-5 rounded-2xl glass border border-glass-border group cursor-pointer hover:bg-accent/[0.02] transition-colors">
                                         <div className="relative">
                                             <input 
