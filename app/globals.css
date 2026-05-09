@@ -306,3 +306,30 @@ body {
   color: var(--primary-fg) !important;
   border-radius: 12px !important;
 }
+
+/* 📱 Mobile Sidebar Premium Contrast Fix */
+.mobile-sidebar,
+.mobile-sidebar button,
+.mobile-sidebar span,
+.mobile-sidebar a,
+.mobile-sidebar div {
+    color: #F1F5F9 !important;
+}
+
+.mobile-sidebar button.bg-accent\/20,
+.mobile-sidebar button.bg-accent\/20 span {
+    color: var(--accent) !important;
+}
+
+.mobile-sidebar .text-accent {
+    color: var(--accent) !important;
+}
+
+.mobile-sidebar * {
+    --text-main: #F1F5F9;
+    --text-muted: #CBD5E1;
+}
+.mobile-sidebar .text-main\/70,
+.mobile-sidebar [class*="text-main"] {
+    color: #F1F5F9 !important;
+}

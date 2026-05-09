@@ -236,7 +236,7 @@ export const VaultDashboard = ({
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="fixed inset-y-0 left-0 w-72 bg-background border-r border-glass-border z-[100] lg:hidden shadow-2xl mobile-sidebar"
+                            className="mobile-sidebar fixed inset-y-0 left-0 w-72 bg-[#0A0A0E] border-r border-white/10 z-[100] lg:hidden shadow-2xl"
                         >
                             <div className="absolute top-8 right-6">
                                 <button
@@ -249,7 +249,7 @@ export const VaultDashboard = ({
                                 </button>
                             </div>
 
-                            <div className="text-white h-full relative z-10">
+                            <div className="h-full relative z-10 [&_span]:!text-slate-100 [&_button]:!text-slate-100">
                                 <SidebarContent />
                             </div>
                         </motion.aside>
