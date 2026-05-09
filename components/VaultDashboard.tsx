@@ -32,8 +32,8 @@ const SidebarItem = ({ icon, label, active, onClick }: SidebarItemProps) => (
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             active 
             ? 'bg-accent/20 text-accent font-bold' 
-            : 'text-muted hover:bg-white/5 hover:text-main'
-        } [.dark-sidebar_&]:${active ? 'text-accent' : 'text-slate-100 hover:text-white'}`}
+            : 'text-muted hover:bg-accent/10 hover:text-accent'
+        }`}
     >
         <span className={active ? 'text-accent' : 'opacity-70 group-hover:opacity-100 transition-opacity'}>
             {icon}

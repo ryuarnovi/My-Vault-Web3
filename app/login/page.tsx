@@ -91,8 +91,8 @@ function LoginForm() {
                         <Shield size={36} />
                     </div>
                     <h1 className="flex flex-col items-center mb-6">
-                        <span className="text-3xl lg:text-5xl font-black text-main tracking-tighter leading-tight tech-text">VAULT_</span>
-                        <span className="text-3xl lg:text-5xl font-black text-accent underline decoration-4 underline-offset-4 tech-text tracking-tighter">AUTHORITY</span>
+                        <span className="text-2xl lg:text-3xl font-black text-main tracking-tighter leading-tight tech-text">VAULT_</span>
+                        <span className="text-2xl lg:text-3xl font-black text-accent underline decoration-2 underline-offset-4 tech-text tracking-tighter">AUTHORITY</span>
                     </h1>
                     <p className="text-muted font-bold tech-text text-xs lg:text-sm opacity-60 leading-relaxed uppercase tracking-widest">
                         RESTRICTED_ACCESS_PORTAL // END_MINISTRATOR_REQUIRED

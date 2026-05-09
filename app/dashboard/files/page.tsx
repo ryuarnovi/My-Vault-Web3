@@ -288,7 +288,7 @@ function FilesContent() {
                                     {files.map((file, i) => (
                                         <tr 
                                             key={file.id} 
-                                            className="group hover:bg-white/[0.05] transition-colors border-b border-glass-border"
+                                            className="group hover:bg-accent/[0.04] transition-colors border-b border-glass-border"
                                         >
                                             <td className="px-8 py-6 font-bold text-main">
                                                 <div className="flex items-center gap-4">
