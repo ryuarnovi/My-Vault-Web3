@@ -42,8 +42,35 @@ function DashboardContent() {
     const [stats, setStats] = React.useState({
         usage: '0 KB',
         count: 0,
-        shared: 0
+        shared: 0,
+        remaining: 'Calculating...',
+        percentUsed: 0
     });
+    const [isLoadingStats, setIsLoadingStats] = React.useState(true);
+
+    const fetchRemoteStats = React.useCallback(async () => {
+        setIsLoadingStats(true);
+        try {
+            const res = await fetch('/api/stats');
+            if (res.ok) {
+                const data = await res.json();
+                setStats(prev => ({
+                    ...prev,
+                    usage: data.used > 1024 * 1024 
+                        ? `${(data.used / (1024 * 1024)).toFixed(1)} MB` 
+                        : `${(data.used / 1024).toFixed(1)} KB`,
+                    remaining: data.remaining > 1024 * 1024 
+                        ? `${(data.remaining / (1024 * 1024)).toFixed(1)} MB` 
+                        : `${(data.remaining / 1024).toFixed(1)} KB`,
+                    percentUsed: data.percentUsed
+                }));
+            }
+        } catch (err) {
+            console.error('Failed to fetch remote stats:', err);
+        } finally {
+            setIsLoadingStats(false);
+        }
+    }, []);
 
     React.useEffect(() => {
         if (publicKey) {
@@ -61,16 +88,14 @@ function DashboardContent() {
             const sorted = [...filtered].sort((a, b) => b.uploadedAt - a.uploadedAt);
             setFiles(sorted.slice(0, 5));
             
-            const totalSize = inventory.reduce((acc: number, f: any) => acc + f.size, 0);
-            setStats({
-                usage: totalSize > 1024 * 1024 
-                    ? `${(totalSize / (1024 * 1024)).toFixed(1)} MB` 
-                    : `${(totalSize / 1024).toFixed(1)} KB`,
-                count: inventory.length,
-                shared: 0
-            });
+            setStats(prev => ({
+                ...prev,
+                count: inventory.length
+            }));
+
+            fetchRemoteStats();
         }
-    }, [publicKey, query]);
+    }, [publicKey, query, fetchRemoteStats]);
 
     const formatTime = (ts: number) => {
         const diff = Date.now() - ts;
@@ -133,10 +158,10 @@ function DashboardContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
                 <StatCard 
-                    icon={<HardDrive size={22} />} 
-                    label="Storage Usage" 
-                    value={stats.usage} 
-                    subValue="OF_UNLIMITED_CAPACITY"
+                    icon={<HardDrive size={22} className={isLoadingStats ? "animate-pulse" : ""} />} 
+                    label="Remaining Storage" 
+                    value={isLoadingStats ? "..." : stats.remaining} 
+                    subValue={isLoadingStats ? "SYNCING_REMOTE..." : `${stats.usage} USED // ${stats.percentUsed.toFixed(1)}%`}
                     delay={0.1}
                 />
                 <StatCard 
