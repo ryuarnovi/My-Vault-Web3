@@ -8,6 +8,7 @@ import { Shield, Lock, AlertCircle, RefreshCw } from 'lucide-react';
 import { WalletButton } from '@/components/WalletButton';
 import { createLoginMessage } from '@/lib/auth';
 import bs58 from 'bs58';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 function LoginForm() {
     const { publicKey, signMessage, connected } = useWallet();
@@ -92,6 +93,9 @@ function LoginForm() {
                     <span className="w-6 h-6 glass rounded-full flex items-center justify-center border border-glass-border">←</span>
                     BACK_TO_HOME
                 </button>
+                <div className="absolute top-6 right-6">
+                    <ThemeToggle />
+                </div>
                 <div>
                     <div className="w-20 h-20 glass clip-corners flex items-center justify-center mx-auto mb-8 text-accent hud-border group relative">
                         <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />

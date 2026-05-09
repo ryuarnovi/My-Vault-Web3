@@ -4,6 +4,7 @@ import { motion, Variants } from 'framer-motion';
 import { WalletButton } from '@/components/WalletButton';
 import { Shield, Cloud, Lock, ArrowRight, Zap, Database, Eye, Key, Layers, Server } from 'lucide-react';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import Head from 'next/head';
 
 export default function Home() {
@@ -24,13 +25,13 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-slate-900 relative selection:bg-accent/30 overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-background text-main relative selection:bg-accent/30 overflow-x-hidden">
       {/* Dynamic Background Elements */}
       <div className="dot-grid" />
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/2 rounded-full blur-[120px] pointer-events-none" />
       
       {/* Navigation Header */}
-      <nav className="flex justify-between items-center px-6 md:px-12 py-4 fixed top-0 w-full z-[100] bg-white/70 backdrop-blur-xl border-b border-slate-200/50 transition-all duration-300">
+      <nav className="flex justify-between items-center px-6 md:px-12 py-4 fixed top-0 w-full z-[100] bg-background/70 backdrop-blur-xl border-b border-glass-border transition-all duration-300">
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -51,10 +52,11 @@ export default function Home() {
           className="flex items-center gap-4 md:gap-8"
         >
           <Link href="/login" className="hidden sm:block">
-            <button className="text-[10px] font-black tech-text tracking-widest text-slate-900 hover:text-white transition-all uppercase px-5 py-2.5 border border-slate-200 hover:bg-slate-900 rounded-full hover:shadow-lg active:scale-95">
+            <button className="text-[10px] font-black tech-text tracking-widest text-main hover:text-white transition-all uppercase px-5 py-2.5 border border-glass-border hover:bg-main rounded-full hover:shadow-lg active:scale-95">
               ACCESS_CORE
             </button>
           </Link>
+          <ThemeToggle />
           <div className="scale-90 md:scale-100 origin-right">
             <WalletButton />
           </div>
@@ -70,7 +72,7 @@ export default function Home() {
             animate="visible"
             className="text-center max-w-5xl"
           >
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 bg-slate-50 px-5 py-2 rounded-full border border-slate-200 mb-10 shadow-sm">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 bg-surface px-5 py-2 rounded-full border border-glass-border mb-10 shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-20"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
@@ -246,16 +248,16 @@ export default function Home() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-40 px-6 text-center relative overflow-hidden bg-white">
-          <div className="absolute inset-0 bg-slate-50 -skew-y-3 pointer-events-none" />
+        <section className="py-40 px-6 text-center relative overflow-hidden bg-background">
+          <div className="absolute inset-0 bg-surface -skew-y-3 pointer-events-none" />
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="max-w-4xl mx-auto relative z-10"
           >
-            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none text-slate-900">Ready to <span className="text-accent">Secure</span> Your World?</h2>
-            <p className="text-lg text-slate-500 tech-text mb-16 opacity-70 tracking-widest uppercase">Take control of your data today. No sign-ups. Just your wallet.</p>
+            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none text-main">Ready to <span className="text-accent">Secure</span> Your World?</h2>
+            <p className="text-lg text-muted tech-text mb-16 opacity-70 tracking-widest uppercase">Take control of your data today. No sign-ups. Just your wallet.</p>
             <Link href="/login">
               <button className="premium-button px-16 py-8 text-xs font-black tracking-[0.4em] tech-text uppercase clip-corners hover:scale-110 active:scale-95 transition-all">
                 ENGAGE_VAULT_SYSTEM
@@ -315,10 +317,10 @@ export default function Home() {
           </div>
 
           <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[9px] font-black tech-text text-slate-500 uppercase tracking-[0.2em]">
+            <p className="text-[9px] font-black tech-text text-muted uppercase tracking-[0.2em]">
               © 2024 Ryuarnovi // Decentralized Precision // All Rights Reserved
             </p>
-            <div className="flex gap-8 text-[9px] font-black tech-text text-slate-500 uppercase tracking-[0.2em]">
+            <div className="flex gap-8 text-[9px] font-black tech-text text-muted uppercase tracking-[0.2em]">
               <a href="#" className="hover:text-white transition-colors">Privacy_Protocol</a>
               <a href="#" className="hover:text-white transition-colors">Terms_of_Service</a>
               <a href="#" className="hover:text-white transition-colors">System_Status</a>

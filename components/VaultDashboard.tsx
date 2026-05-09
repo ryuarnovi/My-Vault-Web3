@@ -16,6 +16,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { WalletButton } from './WalletButton';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { getFileInventory } from '@/lib/vault';
+import { ThemeToggle } from './ThemeToggle';
 
 interface SidebarItemProps {
     icon: React.ReactNode;
@@ -531,6 +532,8 @@ export const VaultDashboard = ({
                                 )}
                             </AnimatePresence>
                         </div>
+
+                        <ThemeToggle />
 
                         <WalletButton />
                     </div>
