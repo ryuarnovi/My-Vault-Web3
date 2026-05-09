@@ -15,6 +15,31 @@ interface FileActionMenuProps {
     onUpdate?: () => void;
 }
 
+const getMimeType = (fileName: string, originalType?: string) => {
+    if (originalType && originalType !== 'application/octet-stream' && originalType !== '') return originalType;
+    
+    // Strip .enc if present
+    const cleanName = fileName.endsWith('.enc') ? fileName.slice(0, -4) : fileName;
+    const ext = cleanName.toLowerCase().split('.').pop();
+    
+    const mimeMap: Record<string, string> = {
+        'pdf': 'application/pdf',
+        'png': 'image/png',
+        'jpg': 'image/jpeg',
+        'jpeg': 'image/jpeg',
+        'gif': 'image/gif',
+        'svg': 'image/svg+xml',
+        'webp': 'image/webp',
+        'txt': 'text/plain',
+        'html': 'text/html',
+        'mp4': 'video/mp4',
+        'mp3': 'audio/mpeg',
+        'wav': 'audio/wav'
+    };
+    
+    return mimeMap[ext || ''] || 'application/octet-stream';
+};
+
 export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps) => {
     console.log('🏗️ RENDERING_ACTION_MENU_FOR:', file.name);
     const [isOpen, setIsOpen] = React.useState(false);
@@ -90,7 +115,7 @@ export const FileActionMenu = ({ file, onDelete, onUpdate }: FileActionMenuProps
             }
             
             // 3. Handle Actions
-            const blobType = isDecrypted ? (file.type || 'application/octet-stream') : 'application/octet-stream';
+            const blobType = isDecrypted ? getMimeType(file.name, file.type) : 'application/octet-stream';
             const blob = new Blob([finalData], { type: blobType });
             const url = window.URL.createObjectURL(blob);
 
