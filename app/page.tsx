@@ -268,62 +268,89 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#0A0A0E] pt-24 pb-12 px-6 md:px-12 relative z-20 border-t border-white/5">
+      {/* Footer */}
+      <footer className="pt-20 pb-10 px-6 md:px-12 relative z-20 border-t border-white/10"
+        style={{ backgroundColor: '#0d0d0d' }}
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 glass clip-corners flex items-center justify-center text-accent hud-border">
+                <div
+                  className="w-8 h-8 clip-corners flex items-center justify-center border"
+                  style={{ backgroundColor: 'rgba(62,207,142,0.08)', borderColor: 'rgba(62,207,142,0.3)', color: '#3ecf8e' }}
+                >
                   <Shield size={16} />
                 </div>
-                <span className="text-xl font-black tracking-tighter tech-text uppercase text-white">VAULT_<span className="text-accent">THREE</span></span>
+                <span className="text-xl font-black tracking-tighter tech-text uppercase" style={{ color: '#f0f0f0' }}>
+                  VAULT_<span style={{ color: '#3ecf8e' }}>THREE</span>
+                </span>
               </div>
-              <p className="text-sm text-slate-400 font-medium max-w-sm leading-relaxed mb-8 tech-text uppercase tracking-wider opacity-60">
+              <p className="text-sm font-medium max-w-sm leading-relaxed mb-8"
+                style={{ color: '#888' }}
+              >
                 The next generation of decentralized storage. Built on Solana and IPFS for unmatched security, speed, and reliability.
               </p>
               <div className="flex gap-4">
-                {/* Social Placeholder Icons */}
-                <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
-                  <Zap size={18} />
-                </div>
-                <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
-                  <Database size={18} />
-                </div>
-                <div className="w-10 h-10 glass rounded-lg flex items-center justify-center text-muted hover:text-accent transition-colors cursor-pointer border border-glass-border">
-                  <Server size={18} />
-                </div>
+                {[<Zap size={18} />, <Database size={18} />, <Server size={18} />].map((icon, i) => (
+                  <div key={i}
+                    className="w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer border transition-colors hover:border-[#3ecf8e] hover:text-[#3ecf8e]"
+                    style={{ backgroundColor: 'rgba(255,255,255,0.04)', borderColor: '#2a2a2a', color: '#555' }}
+                  >
+                    {icon}
+                  </div>
+                ))}
               </div>
             </div>
-            
-            <div>
-              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-8">Protocol</h4>
-              <ul className="space-y-4">
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Documentation</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">API_Reference</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Solana_Scan</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">IPFS_Nodes</a></li>
-              </ul>
-            </div>
 
-            <div>
-              <h4 className="text-[10px] font-black tech-text text-accent tracking-[0.3em] uppercase mb-8">Ecosystem</h4>
-              <ul className="space-y-4">
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Community</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Github_Repo</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Audit_Report</a></li>
-                <li><a href="#" className="text-[11px] text-slate-400 font-bold tech-text hover:text-white transition-colors uppercase tracking-widest">Changelog</a></li>
-              </ul>
-            </div>
+            {[
+              {
+                label: 'Protocol',
+                links: ['Documentation', 'API_Reference', 'Solana_Scan', 'IPFS_Nodes']
+              },
+              {
+                label: 'Ecosystem',
+                links: ['Community', 'Github_Repo', 'Audit_Report', 'Changelog']
+              }
+            ].map((col) => (
+              <div key={col.label}>
+                <h4 className="text-[10px] font-black tech-text tracking-[0.3em] uppercase mb-8"
+                  style={{ color: '#3ecf8e' }}
+                >
+                  {col.label}
+                </h4>
+                <ul className="space-y-4">
+                  {col.links.map((link) => (
+                    <li key={link}>
+                      <a href="#"
+                        className="text-xs font-bold tech-text transition-colors hover:text-[#3ecf8e]"
+                        style={{ color: '#555' }}
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[9px] font-black tech-text text-slate-500 uppercase tracking-[0.2em]">
+          <div className="pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-6"
+            style={{ borderColor: '#2a2a2a' }}
+          >
+            <p className="text-[9px] font-black tech-text uppercase tracking-[0.2em]"
+              style={{ color: '#444' }}
+            >
               © 2024 Ryuarnovi // Decentralized Precision // All Rights Reserved
             </p>
-            <div className="flex gap-8 text-[9px] font-black tech-text text-slate-500 uppercase tracking-[0.2em]">
-              <a href="#" className="hover:text-white transition-colors">Privacy_Protocol</a>
-              <a href="#" className="hover:text-white transition-colors">Terms_of_Service</a>
-              <a href="#" className="hover:text-white transition-colors">System_Status</a>
+            <div className="flex gap-8 text-[9px] font-black tech-text uppercase tracking-[0.2em]">
+              {['Privacy_Protocol', 'Terms_of_Service', 'System_Status'].map((item) => (
+                <a key={item} href="#" className="transition-colors hover:text-[#3ecf8e]"
+                  style={{ color: '#444' }}
+                >
+                  {item}
+                </a>
+              ))}
             </div>
           </div>
         </div>
