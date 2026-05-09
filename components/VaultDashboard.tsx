@@ -25,6 +25,7 @@ interface SidebarItemProps {
     label: string;
     active?: boolean;
     onClick?: () => void;
+    forceWhiteText?: boolean;
 }
 
 const SidebarItem = ({
@@ -32,20 +33,33 @@ const SidebarItem = ({
     label,
     active,
     onClick,
+    forceWhiteText = false,
 }: SidebarItemProps) => (
     <button
         onClick={onClick}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
             active
-                ? 'bg-accent/20 text-accent font-bold'
-                : 'text-main/70 hover:bg-accent/10 hover:text-accent'
+                ? 'bg-accent/20 font-bold'
+                : 'hover:bg-accent/10'
+        } ${
+            forceWhiteText
+                ? active
+                    ? 'text-white'
+                    : 'text-white/70 hover:text-white'
+                : active
+                    ? 'text-accent'
+                    : 'text-main/70 hover:text-accent'
         }`}
     >
         <span
             className={
-                active
-                    ? 'text-accent'
-                    : 'opacity-70 group-hover:opacity-100 transition-opacity'
+                forceWhiteText
+                    ? active
+                        ? 'text-white'
+                        : 'opacity-70 group-hover:opacity-100 transition-opacity text-white'
+                    : active
+                        ? 'text-accent'
+                        : 'opacity-70 group-hover:opacity-100 transition-opacity'
             }
         >
             {icon}
@@ -131,56 +145,55 @@ export const VaultDashboard = ({
 
     if (!connected) return null;
 
-    const SidebarContent = () => (
+    // Nav items shared between desktop and mobile
+    const navItems = [
+        {
+            id: 'overview',
+            label: 'Overview',
+            icon: <LayoutDashboard size={18} />,
+            path: '/dashboard',
+        },
+        {
+            id: 'inventory',
+            label: 'All Files',
+            icon: <Files size={18} />,
+            path: '/dashboard/files',
+        },
+        {
+            id: 'upload',
+            label: 'Upload',
+            icon: <Upload size={18} />,
+            path: '/upload',
+        },
+    ];
+
+    // Desktop sidebar — uses default theme colors
+    const DesktopSidebarContent = () => (
         <div className="flex flex-col h-full gap-8 p-6">
             <div>
-                <Link 
-                    href="/" 
+                <Link
+                    href="/"
                     className="flex items-center gap-3 px-3 mb-10 group hover:opacity-80 transition-opacity cursor-pointer"
                 >
                     <div className="w-10 h-10 bg-accent flex items-center justify-center clip-corners-sm group-hover:scale-110 transition-transform">
                         <Files size={20} className="text-white" />
                     </div>
 
-                    <span className="text-2xl font-black tracking-tighter text-main [.mobile-sidebar_&]:text-white tech-text">
+                    <span className="text-2xl font-black tracking-tighter text-main tech-text">
                         Vault
                         <span className="text-accent">3</span>
                     </span>
                 </Link>
 
                 <nav className="space-y-2">
-                    {[
-                        {
-                            id: 'overview',
-                            label: 'Overview',
-                            icon: (
-                                <LayoutDashboard size={18} />
-                            ),
-                            path: '/dashboard',
-                        },
-                        {
-                            id: 'inventory',
-                            label: 'All Files',
-                            icon: <Files size={18} />,
-                            path: '/dashboard/files',
-                        },
-                        {
-                            id: 'upload',
-                            label: 'Upload',
-                            icon: <Upload size={18} />,
-                            path: '/upload',
-                        },
-                    ].map((item) => (
+                    {navItems.map((item) => (
                         <SidebarItem
                             key={item.id}
                             icon={item.icon}
                             label={item.label}
                             active={activeTab === item.id}
                             onClick={() =>
-                                handleNavigation(
-                                    item.id,
-                                    item.path
-                                )
+                                handleNavigation(item.id, item.path)
                             }
                         />
                     ))}
@@ -193,11 +206,56 @@ export const VaultDashboard = ({
                     label="Settings"
                     active={activeTab === 'settings'}
                     onClick={() =>
-                        handleNavigation(
-                            'settings',
-                            '/settings'
-                        )
+                        handleNavigation('settings', '/settings')
                     }
+                />
+            </div>
+        </div>
+    );
+
+    // Mobile sidebar — forces white text regardless of theme
+    const MobileSidebarContent = () => (
+        <div className="flex flex-col h-full gap-8 p-6">
+            <div>
+                <Link
+                    href="/"
+                    className="flex items-center gap-3 px-3 mb-10 group hover:opacity-80 transition-opacity cursor-pointer"
+                >
+                    <div className="w-10 h-10 bg-accent flex items-center justify-center clip-corners-sm group-hover:scale-110 transition-transform">
+                        <Files size={20} className="text-white" />
+                    </div>
+
+                    <span className="text-2xl font-black tracking-tighter text-white tech-text">
+                        Vault
+                        <span className="text-accent">3</span>
+                    </span>
+                </Link>
+
+                <nav className="space-y-2">
+                    {navItems.map((item) => (
+                        <SidebarItem
+                            key={item.id}
+                            icon={item.icon}
+                            label={item.label}
+                            active={activeTab === item.id}
+                            onClick={() =>
+                                handleNavigation(item.id, item.path)
+                            }
+                            forceWhiteText
+                        />
+                    ))}
+                </nav>
+            </div>
+
+            <div className="mt-auto">
+                <SidebarItem
+                    icon={<Settings size={18} />}
+                    label="Settings"
+                    active={activeTab === 'settings'}
+                    onClick={() =>
+                        handleNavigation('settings', '/settings')
+                    }
+                    forceWhiteText
                 />
             </div>
         </div>
@@ -210,7 +268,7 @@ export const VaultDashboard = ({
 
             {/* Desktop Sidebar */}
             <aside className="hidden lg:flex w-72 glass border-r border-glass-border flex-col z-20">
-                <SidebarContent />
+                <DesktopSidebarContent />
             </aside>
 
             {/* Mobile Sidebar */}
@@ -236,21 +294,21 @@ export const VaultDashboard = ({
                                 damping: 25,
                                 stiffness: 200,
                             }}
-                            className="mobile-sidebar fixed inset-y-0 left-0 w-72 bg-[#0A0A0E] border-r border-white/10 z-[100] lg:hidden shadow-2xl"
+                            className="mobile-sidebar fixed inset-y-0 left-0 w-72 bg-background border-r border-glass-border z-[100] lg:hidden shadow-2xl"
                         >
                             <div className="absolute top-8 right-6">
                                 <button
                                     onClick={() =>
                                         setIsMobileMenuOpen(false)
                                     }
-                                    className="w-10 h-10 flex items-center justify-center bg-surface border border-glass-border clip-corners-sm text-accent hover:text-main transition-colors"
+                                    className="w-10 h-10 flex items-center justify-center bg-white/10 border border-white/20 clip-corners-sm text-white hover:text-white/70 transition-colors"
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="h-full relative z-10 [&_span]:!text-slate-100 [&_button]:!text-slate-100">
-                                <SidebarContent />
+                            <div className="h-full relative z-10">
+                                <MobileSidebarContent />
                             </div>
                         </motion.aside>
                     </>

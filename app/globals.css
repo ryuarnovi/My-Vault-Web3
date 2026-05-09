@@ -261,7 +261,52 @@ body {
     animation: spin-slow 8s linear infinite;
 }
 
-/* Modal and Wallet UI Overrides */
+/* =====================================================
+   📱 MOBILE SIDEBAR — FORCE WHITE TEXT (LIGHT MODE FIX)
+   Ensures sidebar text is always white on mobile overlay,
+   regardless of light/dark theme setting.
+   ===================================================== */
+.mobile-sidebar {
+    /* Override background to always be dark so white text is readable */
+    background-color: #0F172A !important;
+    border-right-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* All text inside mobile sidebar → white */
+.mobile-sidebar,
+.mobile-sidebar button,
+.mobile-sidebar a,
+.mobile-sidebar span,
+.mobile-sidebar p,
+.mobile-sidebar nav {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Muted / inactive nav items → slightly dimmed white */
+.mobile-sidebar button:not(:hover):not(.active) {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* Hover state → full white */
+.mobile-sidebar button:hover {
+    color: rgba(255, 255, 255, 1) !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Active nav item background */
+.mobile-sidebar button.bg-accent\/20 {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+/* Logo "Vault" text always white */
+.mobile-sidebar .tech-text {
+    color: #ffffff !important;
+}
+
+/* =====================================================
+   Modal and Wallet UI Overrides
+   ===================================================== */
 .wallet-adapter-modal-wrapper {
   background-color: #ffffff !important;
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
@@ -305,31 +350,4 @@ body {
   background: var(--primary) !important;
   color: var(--primary-fg) !important;
   border-radius: 12px !important;
-}
-
-/* 📱 Mobile Sidebar Premium Contrast Fix */
-.mobile-sidebar,
-.mobile-sidebar button,
-.mobile-sidebar span,
-.mobile-sidebar a,
-.mobile-sidebar div {
-    color: #F1F5F9 !important;
-}
-
-.mobile-sidebar button.bg-accent\/20,
-.mobile-sidebar button.bg-accent\/20 span {
-    color: var(--accent) !important;
-}
-
-.mobile-sidebar .text-accent {
-    color: var(--accent) !important;
-}
-
-.mobile-sidebar * {
-    --text-main: #F1F5F9;
-    --text-muted: #CBD5E1;
-}
-.mobile-sidebar .text-main\/70,
-.mobile-sidebar [class*="text-main"] {
-    color: #F1F5F9 !important;
 }
