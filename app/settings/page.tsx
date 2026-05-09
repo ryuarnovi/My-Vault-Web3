@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { VaultDashboard } from '@/components/VaultDashboard';
 import { motion } from 'framer-motion';
