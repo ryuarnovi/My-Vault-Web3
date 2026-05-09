@@ -2,110 +2,287 @@
 
 import { motion } from 'framer-motion';
 import { WalletButton } from '@/components/WalletButton';
-import { Shield, Cloud, Lock, ArrowRight, Zap } from 'lucide-react';
+import { Shield, Cloud, Lock, ArrowRight, Zap, Database, Eye, Key, Layers, Server } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-background text-main relative selection:bg-accent/30 overflow-hidden">
-      {/* Background Patterns */}
+    <div className="flex flex-col min-h-screen bg-background text-main relative selection:bg-accent/30 overflow-x-hidden">
+      {/* Dynamic Background Elements */}
       <div className="dot-grid" />
       <div className="scanline" />
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
       
-      {/* Header */}
-      <nav className="flex justify-between items-center px-4 md:px-6 lg:px-12 py-5 lg:py-8 fixed top-0 w-full z-[100] glass border-b border-glass-border">
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-8 h-8 md:w-10 md:h-10 glass clip-corners flex items-center justify-center text-accent hud-border group relative shrink-0">
+      {/* Navigation Header */}
+      <nav className="flex justify-between items-center px-6 md:px-12 py-5 fixed top-0 w-full z-[100] glass border-b border-glass-border">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3"
+        >
+          <div className="w-10 h-10 glass clip-corners flex items-center justify-center text-accent hud-border group relative shrink-0">
             <div className="absolute inset-0 bg-accent/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Shield size={16} className="md:w-5 md:h-5" />
+            <Shield size={20} />
           </div>
-          <span className="text-lg md:text-2xl font-black tracking-tighter tech-text whitespace-nowrap">VAULT_<span className="text-accent underline">THREE</span></span>
-        </div>
-        <div className="flex items-center gap-3 md:gap-6">
-          <Link href="/login" className="hidden lg:block">
-            <button className="text-[10px] font-black tech-text tracking-widest text-muted hover:text-accent transition-colors uppercase">
-              ACCESS_VAULT
+          <span className="text-xl md:text-2xl font-black tracking-tighter tech-text whitespace-nowrap">
+            VAULT_<span className="text-accent underline">THREE</span>
+          </span>
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-4 md:gap-8"
+        >
+          <Link href="/login" className="hidden sm:block">
+            <button className="text-[10px] font-black tech-text tracking-widest text-muted hover:text-accent transition-all uppercase px-4 py-2 hover:bg-accent/5 rounded-lg">
+              ACCESS_CORE
             </button>
           </Link>
           <div className="scale-90 md:scale-100 origin-right">
             <WalletButton />
           </div>
-        </div>
+        </motion.div>
       </nav>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 mt-24 lg:mt-32 relative z-10">
+      <main className="flex-1 relative z-10">
         {/* Hero Section */}
-        <section className="text-center max-w-4xl pt-16 lg:pt-20">
+        <section className="min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-center max-w-5xl"
           >
-            <div className="glass px-4 md:px-6 py-2 rounded-xl text-[9px] md:text-[10px] font-black mb-8 lg:mb-10 border border-accent/20 tech-text tracking-[0.2em] md:tracking-[0.3em] uppercase inline-flex items-center gap-2 md:gap-3 max-w-full overflow-hidden">
-              <span className="w-2 h-2 bg-accent rounded-full animate-pulse shrink-0" />
-              <span className="truncate">SYSTEM_READY // SOLANA_POWERED // IPFS_SYNC_ENABLED</span>
-            </div>
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 glass px-5 py-2 rounded-full border border-accent/20 mb-10 shadow-xl shadow-accent/5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+              </span>
+              <span className="text-[10px] font-black tech-text tracking-[0.2em] text-accent uppercase">
+                Decentralized_Storage_Network_v3.0_Online
+              </span>
+            </motion.div>
             
-            <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black leading-[1.1] md:leading-[0.9] mb-8 tracking-tighter text-main custom-text-gradient uppercase break-words w-full px-2">
-              YOUR_DATA.<br />
-              <span className="text-accent underline decoration-4 md:decoration-8 underline-offset-4 lg:underline-offset-8">DECENTRALIZED.</span>
-            </h1>
+            <motion.h1 variants={itemVariants} className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.95] tracking-tighter mb-10 uppercase">
+              Secure Your <br />
+              <span className="text-accent underline decoration-4 md:decoration-8 underline-offset-8">Digital Legacy.</span>
+            </motion.h1>
             
-            <p className="text-sm md:text-base lg:text-xl text-muted font-bold tech-text mb-10 lg:mb-12 leading-relaxed max-w-2xl mx-auto opacity-70 uppercase tracking-[0.1em] px-4">
-              STORE_ASSETS_IN_A_CRYPTOGRAPHICALLY_SECURE_PERIMETER. 
-              NO_INTERMEDIARIES_REQUIRED. <br className="hidden md:block" /> OWN_YOUR_HASH_OWN_YOUR_FUTURE.
-            </p>
+            <motion.p variants={itemVariants} className="text-base md:text-lg lg:text-xl text-muted font-medium tech-text mb-14 max-w-3xl mx-auto leading-relaxed opacity-80 uppercase tracking-widest">
+              The ultimate Web3 storage solution. Encrypt, fragment, and distribute your sensitive data across the global IPFS grid with Solana-backed proof of ownership.
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center px-4">
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link href="/login" className="w-full sm:w-auto">
-                <button className="premium-button w-full sm:w-auto flex items-center justify-center gap-4 text-[9px] md:text-[10px] font-black tech-text tracking-[0.2em] px-8 md:px-12 py-4 md:py-5 clip-corners-sm uppercase group transition-all hover:scale-105 active:scale-95">
-                  INITIALIZE_AUTHORIZATION <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <button className="premium-button w-full sm:w-auto flex items-center justify-center gap-5 text-[11px] font-black tech-text tracking-[0.3em] px-12 py-6 clip-corners uppercase group hover:shadow-2xl hover:shadow-accent/30">
+                  INITIALIZE_AUTHORIZATION 
+                  <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
                 </button>
               </Link>
-            </div>
+            </motion.div>
+            
+            {/* Trust Badges */}
+            <motion.div variants={itemVariants} className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40">
+              {[
+                { icon: <Lock size={16} />, text: "END_TO_END_ENCRYPTED" },
+                { icon: <Zap size={16} />, text: "SOLANA_POWERED" },
+                { icon: <Database size={16} />, text: "IPFS_DISTRIBUTED" },
+                { icon: <Shield size={16} />, text: "ZERO_KNOWLEDGE" }
+              ].map((badge, i) => (
+                <div key={i} className="flex items-center justify-center gap-2 text-[9px] font-black tech-text tracking-widest">
+                  {badge.icon}
+                  {badge.text}
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
         </section>
 
-        {/* Features Preview */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl w-full mt-32 pb-32">
-          {[
-            {
-              icon: <Shield size={28} />,
-              title: "VAULT_ENCRYPTION",
-              desc: "Strings are mangled locally within your terminal before matrix transmission. Zero footprint protocol."
-            },
-            {
-              icon: <Cloud size={28} />,
-              title: "IPFS_DISTRIBUTION",
-              desc: "Fragmented storage ensures asset redundancy across the decentralized grid. High availability guaranteed."
-            },
-            {
-              icon: <Lock size={28} />,
-              title: "PRIVATE_KEYS",
-              desc: "Your Solana signature is the sole verification mechanism. Not even we can observe the contents."
-            }
-          ].map((feature, i) => (
-            <motion.div
-              key={i}
-              className="glass-card p-10 text-left flex flex-col gap-6 border border-glass-border hover-lift hud-border relative group"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.1 }}
-            >
-              <div className="absolute top-0 right-0 w-16 h-16 bg-accent/5 clip-corners-sm -z-10 transition-colors group-hover:bg-accent/10" />
-              <div className="w-14 h-14 glass clip-corners flex items-center justify-center text-accent hud-border">
-                {feature.icon}
+        {/* Feature Grid Section */}
+        <section className="py-32 px-6 bg-accent/[0.02] border-y border-glass-border">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-24 text-center">
+              <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight uppercase">Protocol_Capabilities</h2>
+              <div className="h-1.5 w-24 bg-accent mx-auto rounded-full" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                {
+                  icon: <Key className="text-accent" size={32} />,
+                  title: "Client-Side Encryption",
+                  desc: "Your data is mangled locally using AES-256 before leaving your browser. We never see your raw files."
+                },
+                {
+                  icon: <Layers className="text-accent" size={32} />,
+                  title: "IPFS Fragmentation",
+                  desc: "Files are split and distributed across the InterPlanetary File System, ensuring permanent availability."
+                },
+                {
+                  icon: <Zap className="text-accent" size={32} />,
+                  title: "Solana Verification",
+                  desc: "Every deposit creates an immutable record on the Solana blockchain, proving your absolute ownership."
+                },
+                {
+                  icon: <Eye className="text-accent" size={32} />,
+                  title: "Zero-Knowledge Vault",
+                  desc: "No database, no centralized server, no tracking. Only you have the keys to unlock your digital vault."
+                },
+                {
+                  icon: <Server className="text-accent" size={32} />,
+                  title: "Cross-Device Sync",
+                  desc: "Access your files from any terminal by connecting your Solana wallet. Your inventory syncs instantly."
+                },
+                {
+                  icon: <Shield className="text-accent" size={32} />,
+                  title: "Anti-Censorship",
+                  desc: "Leveraging decentralized protocols makes your data resilient to takedowns and centralized control."
+                }
+              ].map((feature, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="glass-card p-12 hover-lift group border border-glass-border relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 clip-corners transition-all group-hover:bg-accent/10" />
+                  <div className="mb-8 p-4 glass w-fit clip-corners-sm hud-border group-hover:bg-accent/5 transition-colors">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-2xl font-black mb-4 tech-text tracking-tight uppercase group-hover:text-accent transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted font-medium leading-relaxed opacity-70">
+                    {feature.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Informative Walkthrough */}
+        <section className="py-32 px-6 max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-20">
+            <div className="flex-1 space-y-10">
+              <h2 className="text-4xl md:text-6xl font-black leading-none tracking-tight uppercase">
+                The Anatomy of a <span className="text-accent underline">Secure Deposit</span>
+              </h2>
+              <p className="text-lg text-muted tech-text leading-relaxed opacity-80 uppercase tracking-widest">
+                Our protocol ensures that your data remains yours, and only yours. Here's how the vault handles your assets:
+              </p>
+              
+              <div className="space-y-8">
+                {[
+                  { step: "01", title: "LOCAL_ENCRYPTION", text: "Files are encrypted in-browser using your unique cryptographic signature." },
+                  { step: "02", title: "NETWORK_PINNING", text: "The encrypted payload is pinned to multiple IPFS nodes for redundancy." },
+                  { step: "03", title: "LEDGER_COMMITTAL", text: "A hash of the transaction is recorded on the Solana Mainnet ledger." }
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-6 items-start">
+                    <span className="text-4xl font-black text-accent/20 tech-text">{step.step}</span>
+                    <div>
+                      <h4 className="text-xl font-black tech-text tracking-widest mb-2 uppercase">{step.title}</h4>
+                      <p className="text-sm text-muted font-medium leading-relaxed opacity-60">{step.text}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <h3 className="text-2xl font-black text-main tracking-tight mb-3 tech-text uppercase">{feature.title}</h3>
-                <p className="text-[10px] text-muted font-bold tech-text leading-relaxed opacity-60 uppercase tracking-widest">
-                  {feature.desc}
-                </p>
+            </div>
+            
+            <div className="flex-1 w-full max-w-lg">
+              <div className="glass p-10 rounded-[40px] border border-glass-border relative hud-border shadow-2xl shadow-accent/10">
+                <div className="absolute -top-6 -left-6 w-20 h-20 glass clip-corners flex items-center justify-center text-accent">
+                  <Lock size={32} />
+                </div>
+                <div className="space-y-6">
+                  <div className="h-4 w-2/3 bg-accent/20 rounded-full animate-pulse" />
+                  <div className="h-4 w-full bg-muted/10 rounded-full" />
+                  <div className="h-4 w-5/6 bg-muted/10 rounded-full" />
+                  <div className="grid grid-cols-3 gap-4 pt-8">
+                    <div className="aspect-square glass rounded-2xl border border-accent/20 flex items-center justify-center">
+                      <div className="w-1/2 h-1/2 bg-accent/10 rounded-lg" />
+                    </div>
+                    <div className="aspect-square glass rounded-2xl border border-accent/20 flex items-center justify-center">
+                      <div className="w-1/2 h-1/2 bg-accent/10 rounded-lg" />
+                    </div>
+                    <div className="aspect-square glass rounded-2xl border border-accent/20 flex items-center justify-center">
+                      <div className="w-1/2 h-1/2 bg-accent/10 rounded-lg" />
+                    </div>
+                  </div>
+                  <div className="pt-8 flex flex-col items-center gap-4">
+                    <div className="w-full h-2 bg-glass-border rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "100%" }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="h-full bg-accent shadow-[0_0_15px_rgba(var(--accent-rgb),0.8)]"
+                      />
+                    </div>
+                    <span className="text-[10px] font-black tech-text text-accent animate-pulse">VAULT_SYNCHRONIZATION_ACTIVE</span>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-          ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Final CTA */}
+        <section className="py-40 px-6 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-accent/[0.03] -skew-y-3 pointer-events-none" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto relative z-10"
+          >
+            <h2 className="text-4xl md:text-7xl font-black mb-10 tracking-tighter uppercase leading-none">Ready to <span className="text-accent">Secure</span> Your World?</h2>
+            <p className="text-lg text-muted tech-text mb-16 opacity-70 tracking-widest uppercase">Take control of your data today. No sign-ups. Just your wallet.</p>
+            <Link href="/login">
+              <button className="premium-button px-16 py-8 text-xs font-black tracking-[0.4em] tech-text uppercase clip-corners hover:scale-110 active:scale-95 transition-all">
+                ENGAGE_VAULT_SYSTEM
+              </button>
+            </Link>
+          </motion.div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="py-12 px-12 border-t border-glass-border glass">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+          <div className="flex items-center gap-3">
+            <span className="text-lg font-black tracking-tighter tech-text uppercase">VAULT_<span className="text-accent">THREE</span></span>
+          </div>
+          <div className="flex gap-10 text-[10px] font-black tech-text text-muted uppercase tracking-widest">
+            <a href="#" className="hover:text-accent transition-colors">Github</a>
+            <a href="#" className="hover:text-accent transition-colors">Documentation</a>
+            <a href="#" className="hover:text-accent transition-colors">Solana_Mainnet</a>
+            <a href="#" className="hover:text-accent transition-colors">IPFS_Network</a>
+          </div>
+          <p className="text-[9px] font-black tech-text text-muted/40 uppercase tracking-[0.2em]">
+            © 2024 Ryuarnovi // Decentralized Precision
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

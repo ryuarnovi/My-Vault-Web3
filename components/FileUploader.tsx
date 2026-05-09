@@ -101,7 +101,8 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                 metadata: {
                     iv: Buffer.from(iv).toString('base64'),
                     encryptionKey: await exportKey(key),
-                    txHash: txHash || undefined
+                    txHash: txHash || undefined,
+                    category: category // Redundant but safe for cross-sync
                 }
             };
             
@@ -210,6 +211,7 @@ export const FileUploader = ({ onUploadSuccess }: FileUploaderProps) => {
                                             {FILE_CATEGORIES.map((cat) => (
                                                 <button
                                                     key={cat}
+                                                    type="button"
                                                     onClick={() => setCategory(cat)}
                                                     className={`px-5 py-2.5 rounded-lg text-[10px] font-black tech-text tracking-widest transition-all clip-corners-sm ${
                                                         category === cat 

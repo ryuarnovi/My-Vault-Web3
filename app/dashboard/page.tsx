@@ -172,6 +172,7 @@ function DashboardContent() {
                                 <thead>
                                     <tr className="border-b border-glass-border bg-white/[0.02]">
                                         <th className="px-8 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text min-w-[240px]">FILE_NAME</th>
+                                        <th className="px-4 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">CATEGORY</th>
                                         <th className="px-4 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text">SIZE</th>
                                         <th className="px-4 py-6 text-[10px] text-muted font-black tracking-[0.2em] uppercase tech-text text-center">TIME_LOGG</th>
                                         <th className="px-4 py-6"></th>
@@ -192,6 +193,11 @@ function DashboardContent() {
                                                     </div>
                                                     <span className="truncate max-w-[150px] lg:max-w-[200px]">{file.name}</span>
                                                 </div>
+                                            </td>
+                                            <td className="px-4 py-6">
+                                                <span className="px-3 py-1 rounded-md glass border border-glass-border text-[9px] font-black tech-text tracking-widest text-accent uppercase">
+                                                    {file.category || 'OTHER'}
+                                                </span>
                                             </td>
                                             <td className="px-4 py-6 text-sm text-muted font-mono tracking-tighter whitespace-nowrap">
                                                 {(file.size / 1024).toFixed(1)} KB
